@@ -170,24 +170,32 @@ class SingleElimination(Tournament):
 		self.inputPool = pool
 	
 	def buildAllPools(self):
-		print self.inputPool.numberOfTeams
-		nOfLayers = log2(self.inputPool.numberOfTeams)
+
+		tempPool = self.inputPool
+		nOfTeams = tempPool.numberOfTeams/2
+		for i in range (tempPool.numberOfTeams/2):
+			tempPool.createMatch(i,i+nOfTeams/2, 'match_0-'+str(i))
+		self.addPool(tempPool)
+	
+		nOfLayers = log2(self.inputPool.numberOfTeams)-1
+
 		if float.is_integer(nOfLayers):
-			nOfSpots = int(2**nOfLayers)
 			for layer in range(int(nOfLayers)):
-				nOfSpots = int(nOfSpots/2)
-				tempTeamList = [Team('dummyTeam'+str(i)) for i in range(nOfSpots)]
-				self.addPool(Pool(tempTeamList))
-				for i in range (nOfSpots):
-					self.poolList[layer].createMatch(i,i+1)
+				nOfTeams = int(2**(nOfLayers-layer))
+				tempTeamList = [Team('dummyTeam'+str(i)) for i in range(nOfTeams)]
+				
+				tempPool = Pool('pool'+str(layer),tempTeamList)
+				for i in range (nOfTeams/2):
+					tempPool.createMatch(i,i+nOfTeams/2, 'match_'+str(layer)+'-'+str(i))
+				self.addPool(tempPool)
 		else:
 			print 'not implemented for unfitted number of teams, try with 2, 4, 8, 16,...'
 		
 	def show(self):
 		for pool in self.poolList:
-			print '\n'+pool.name+'\n'
+			print '\n'+str(pool.name)+'\n'
 			for match in pool.matchList:
-				print match.name+' : '+match.TeamA.name+' vs '+match.TeamA.name+'\n'
+				print str(match.name)+' : '+str(match.teamA.name)+' vs '+str(match.teamB.name)+'\n'
 	
 	# TO BE CONTINUED 
 	'''
@@ -213,6 +221,6 @@ if __name__ == "__main__":
 	theTournament = SingleElimination()
 	theTournament.setInputPool(thePool)
 	#don't work yet
-	#theTournament.buildAllPools()
+	theTournament.buildAllPools()
 	theTournament.show()
 	
