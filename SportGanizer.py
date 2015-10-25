@@ -43,6 +43,9 @@ class Team:
 	
 
 
+# Ceci est un test batard en francais
+
+
 class Match:
 	def __init__(self, initName = "defaultMatch", initTeamA = Team(), initTeamB = Team(), initWeight = 0):
 		self.name = initName
