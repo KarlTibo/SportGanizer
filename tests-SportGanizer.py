@@ -7,9 +7,11 @@ class TestTeam:
 	
 	def setup_class(cls):
 		cls.teamAlice = Team("Alice")
+		cls.teamBob = Team("Bob")
 	
 	def teardown_class(cls):
 		del cls.teamAlice
+		del cls.teamBob
 	
 	def test_team_initialization(cls):
 		assert (cls.teamAlice.name != "defaultTeam")
@@ -19,7 +21,25 @@ class TestTeam:
 	def test_increaseNextMatchIndex(cls):
 		cls.teamAlice._increaseNextMatchIndex()
 		assert (cls.teamAlice.nextMatchIndex == 1)
-
+		
+	def test_sorted(cls):
+		cls.teamAlice.stats['numberOfWins'] += 1
+		assert cls.teamAlice > cls.teamBob
+		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
+		cls.teamAlice.stats['numberOfWins'] = 0
+		cls.teamBob.stats['numberOfLosses'] += 1
+		assert cls.teamAlice > cls.teamBob
+		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
+		cls.teamBob.stats['numberOfLosses'] = 0
+		cls.teamAlice.stats['scoresFor'] += 1
+		assert cls.teamBob < cls.teamAlice
+		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
+		cls.teamAlice.stats['scoresFor'] = 0
+		cls.teamAlice.stats['scoresAgainst'] += 1
+		assert cls.teamAlice < cls.teamBob
+		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamBob
+		
+		
 class TestMatch:
 	#Tests on class Match
 	

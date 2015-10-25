@@ -7,10 +7,21 @@ class Team:
 		self.name = name 
 		self.matchList = []
 		self.nextMatchIndex = 0
+		self.stats = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Stats inside each pool the team participates in, resetted after each pool ends.
+		self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
 
-	def __lt__(self, team_to_compare):
-		return False
-		print 'lt not implemented'
+	def __lt__(self, teamToCompare):
+		if self.stats['numberOfWins'] < teamToCompare.stats['numberOfWins']:
+			return True
+		elif self.stats['numberOfWins'] == teamToCompare.stats['numberOfWins'] and self.stats['numberOfLosses'] > teamToCompare.stats['numberOfLosses']:
+			return True
+		elif self.stats['numberOfWins'] == teamToCompare.stats['numberOfWins'] and self.stats['numberOfLosses'] == teamToCompare.stats['numberOfLosses']:
+			if self.stats['scoresFor'] < teamToCompare.stats['scoresFor']:
+				return True
+			elif self.stats['scoresFor'] == teamToCompare.stats['scoresFor'] and self.stats['scoresAgainst'] > teamToCompare.stats['scoresAgainst']:
+				return True
+		else:
+			return False
 	
 	def _addMatch(self, match):
 		self.matchList.append(match)
