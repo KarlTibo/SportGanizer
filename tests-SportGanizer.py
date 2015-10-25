@@ -116,6 +116,9 @@ class TestPool:
 
 ## hello Simon
 ## hello karl
+
+## deuxième hello karl
+
 		
 class TestTournament:
 	#Tests on class Tournament
