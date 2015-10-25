@@ -42,6 +42,8 @@ class Team:
 	#_becomes : needs to erase future matches (crossovers)
 	
 
+#retest don't understand
+
 
 class Match:
 	def __init__(self, initName = "defaultMatch", initTeamA = Team(), initTeamB = Team(), initWeight = 0):
