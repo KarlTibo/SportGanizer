@@ -116,6 +116,10 @@ class TestPool:
 		assert cls.poolParty.teamList[0] == cls.teamAlice
 		assert cls.poolParty.teamList[1] == cls.teamBob
 
+	def test_ranking(cls):
+		assert cls.poolParty.ranking() == cls.poolParty.teamList
+
+
 
 class TestTournament:
 	#Tests on class Tournament

@@ -14,6 +14,7 @@ class Team:
 			return True
 		else:
 			return False
+		print 'lt not implemented'
 	
 	def _addMatch(self, match):
 		self.matchList.append(match)
