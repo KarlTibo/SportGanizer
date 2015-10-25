@@ -1,4 +1,4 @@
-from to_be_named import *
+from SportGanizer import *
 #import unittest
 import pytest
 
@@ -15,7 +15,6 @@ class TestTeam:
 		assert (cls.teamAlice.name != "defaultTeam")
 		assert (cls.teamAlice.name == "Alice")
 		assert (cls.teamAlice.matchList == [])
-		assert Team.numberOfTeams == 1
 	
 	def test_increaseNextMatchIndex(cls):
 		cls.teamAlice._increaseNextMatchIndex()
@@ -113,3 +112,19 @@ class TestPool:
 		cls.poolParty.addMatch(cls.matchAB)
 		assert cls.poolParty.numberOfMatches == 1
 		assert cls.poolParty.matchList.count(cls.matchAB) == 1
+		
+class TestTournament:
+	#Tests on class Tournament
+ 	
+	def setup_class(cls):
+		cls.tournamentA = Tournament()
+		
+	def teardown_class(cls):
+		del cls.tournamentA
+ 	
+	def test_match_initialization(cls):
+		assert (cls.tournamentA.name == "no-name Tournament")
+ 	def test_match_rename(cls):
+		cls.tournamentA.rename("Ultimate Tournament")
+		assert (cls.tournamentA.name == "Ultimate Tournament")
+		 
