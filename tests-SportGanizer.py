@@ -79,8 +79,8 @@ class TestMatch:
 		assert cls.matchW1W2.teamB.nextMatchIndex == 1
 	
 	def test_setWinner(cls):
-		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2",)
 		cls.matchCD.setWinner(cls.teamC)
+		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2",)
 		assert cls.matchCD.winner == cls.teamC
 		assert cls.matchW1W2.teamB == cls.teamC
 		cls.matchAB.setWinner(cls.teamAlice)
