@@ -114,12 +114,7 @@ class TestPool:
 	def test_addMatch(cls):
 		pass
 
-## hello
-## hello
 
-## deuxième
-
-		
 class TestTournament:
 	#Tests on class Tournament
  	
