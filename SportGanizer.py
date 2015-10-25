@@ -6,17 +6,17 @@ from numpy import *
 #Definition of the necessary objects
 
 class Team:
-	
-	numberOfTeams = 0
-	
+		
 	def __init__(self, initName = "defaultTeam"):
 		self.name = initName 
 		self.matchList = []
 		self.nextMatchIndex = 0
-		Team.numberOfTeams += 1
 	
-	def __del__(self):
-		Team.numberOfTeams -= 1
+	def __lt__(self, team_to_compare):
+		if :
+			return True
+		else:
+			return False
 	
 	def _addMatch(self, match):
 		self.matchList.append(match)
@@ -94,7 +94,7 @@ class Match:
 			if teamAscore > teamBscore:
 				setWinner(teamA)
 			elif teamBscore > teamAscore:
-				setWinner(teamB)
+				setWinner(teamB)f
 			else:
 				pass #If tie, maybe something happens if possible
 		
@@ -108,15 +108,29 @@ class Match:
 	# match.setVersus?
 
 class Pool:
-	def __init__(self, initName = "defaultPool"):
+	def __init__(self, initName = "defaultPool", initTeamList = []):
 		self.name = initName
+		self.numberOfTeams = 0
+		self.numberOfMatches = 0
+		self.teamList = initTeamList
+		self.matchList = []
 		
-	#To implement : 
-	#Functions : cleanPool, singleElimination, doubleElimination, roundRobin, 
-	#The last Winner cannot have a next match.
+	def addTeam(self, newTeam):
+		self.numberOfTeams += 1
+		self.teamList.append(newTeam)
+		print("NIY")
+		
+	def addMatch(self, matchName = "", teamANumber, teamBNumber):
+		newMatch = Match(matchName, teamList[teamANumber], teamList[teamBNumber])
+		self.matchList.append(newMatch)
+		print("NIY")
+		
+	def ranking(self)
+		sortedTeamList = sorted(self.teamList)
+		print("NIY")
+		return sortedTeamList
+	
 
-	def singleElimination():
-		numberOfMatches = Team.numberOfTeams/2
 
 
 

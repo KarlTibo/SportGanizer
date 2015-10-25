@@ -84,11 +84,32 @@ class TestMatch:
 	assert len(teamAlice.matchList) == 2
 	assert teamAlice.matchList[1] == matchAB
 	assert teamAlice.nextMatchIndex == 1
-	
-	
-	#Tests on class Pool
-	poolParty = Pool("Party")
-	assert poolParty.name != "defaultPool"
-	assert poolParty.name == "Party"
 	"""
 	
+class TestPool:
+	#Tests on class Pool
+	
+	def setup_class(cls):
+		cls.cls.poolParty = Pool("Party")
+		cls.teamAlice = Team("Alice")
+		cls.teamBob = Team("Bob") 
+		cls.matchAB = Match("MatchAB", cls.teamAlice, cls.teamBob)	
+	def teardown_class(cls):
+	
+	def test_pool_initialization(cls):
+		assert cls.poolParty.name != "defaultPool"
+		assert cls.poolParty.name == "Party"
+		assert cls.poolParty.numberOfTeams == 0
+		assert cls.poolParty.numberOfMatches == 0
+		assert cls.poolParty.teamList == []
+		assert cls.poolParty.matchList == []
+
+	def test_addTeam(cls):
+		cls.poolParty.addTeam(cls.teamAlice)
+		assert cls.poolParty.numberOfTeams == 1
+		assert cls.poolParty.teamList.count(cls.teamAlice) == 1
+		
+	def test_addMatch(cls):
+		cls.poolParty.addMatch(cls.matchAB)
+		assert cls.poolParty.numberOfMatches == 1
+		assert cls.poolParty.matchList.count(cls.matchAB) == 1
