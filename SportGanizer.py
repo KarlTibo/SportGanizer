@@ -10,7 +10,7 @@ class Team:
 		self.nextMatchIndex = 0
 
 	def __lt__(self, team_to_compare):
-		if True :
+		if True:
 			return True
 		else:
 			return False
@@ -114,16 +114,14 @@ class Pool:
 	def addTeam(self, newTeam):
 		self.numberOfTeams += 1
 		self.teamList.append(newTeam)
-		print("NIY")
 		
-	def addMatch(self, matchName, teamANumber, teamBNumber):
-		newMatch = Match(matchName, teamList[teamANumber], teamList[teamBNumber])
-		self.matchList.append(newMatch)
-		print("NIY")
+	def createMatch(self, matchName, teamANumber, teamBNumber):
+		self.numberOfMatches += 1
+		self.newMatch = Match(matchName, self.teamList[teamANumber], self.teamList[teamBNumber])
+		self.matchList.append(self.newMatch)
 		
 	def ranking(self):
 		sortedTeamList = sorted(self.teamList)
-		print("NIY")
 		return sortedTeamList
 
 class Tournament:
@@ -131,10 +129,10 @@ class Tournament:
 		self.name = "no-name Tournament"
 		self.poolList = []
 			
-	def rename(self,name):
+	def rename(self, name):
 		self.name = name
 
-	def addPool(self,pool):
+	def addPool(self, pool):
 		self.poolList.append(pool)
 	
 	

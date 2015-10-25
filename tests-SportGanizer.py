@@ -89,15 +89,13 @@ class TestPool:
 	def setup_class(cls):
 		cls.poolParty = Pool("Party")
 		cls.teamAlice = Team("Alice")
-		cls.teamBob = Team("Bob") 
-		cls.matchAB = Match("MatchAB", cls.teamAlice, cls.teamBob)	
+		cls.teamBob = Team("Bob") 	
 	
 	def teardown_class(cls):
 		del cls.teamAlice
 		del cls.teamBob
-		del cls.matchAB
+		del cls.poolParty
 
-		
 	def test_pool_initialization(cls):
 		assert cls.poolParty.name != "defaultPool"
 		assert cls.poolParty.name == "Party"
@@ -106,13 +104,17 @@ class TestPool:
 		assert cls.poolParty.teamList == []
 		assert cls.poolParty.matchList == []
 
-	def test_addTeam(cls):
+	def test_addTeam_and_createMatch(cls):
 		cls.poolParty.addTeam(cls.teamAlice)
 		assert cls.poolParty.numberOfTeams == 1
 		assert cls.poolParty.teamList.count(cls.teamAlice) == 1
-		
-	def test_addMatch(cls):
-		pass
+		cls.poolParty.addTeam(cls.teamBob)
+		assert cls.poolParty.numberOfTeams == 2
+		cls.poolParty.createMatch("matchTest", 0, 1)
+		assert cls.poolParty.numberOfMatches == 1
+		assert cls.poolParty.matchList[0].name == "matchTest"
+		assert cls.poolParty.teamList[0] == cls.teamAlice
+		assert cls.poolParty.teamList[1] == cls.teamBob
 
 
 class TestTournament:
