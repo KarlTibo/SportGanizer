@@ -10,7 +10,7 @@ class Team:
 		self.nextMatchIndex = 0
 
 	def __lt__(self, team_to_compare):
-		if :
+		if True :
 			return True
 		else:
 			return False
@@ -86,7 +86,7 @@ class Match:
 			if teamAscore > teamBscore:
 				setWinner(teamA)
 			elif teamBscore > teamAscore:
-				setWinner(teamB)f
+				setWinner(teamB)
 			else:
 				pass #If tie, maybe something happens if possible
 		
@@ -116,12 +116,12 @@ class Pool:
 		self.teamList.append(newTeam)
 		print("NIY")
 		
-	def addMatch(self, matchName = "", teamANumber, teamBNumber):
+	def addMatch(self, matchName, teamANumber, teamBNumber):
 		newMatch = Match(matchName, teamList[teamANumber], teamList[teamBNumber])
 		self.matchList.append(newMatch)
 		print("NIY")
 		
-	def ranking(self)
+	def ranking(self):
 		sortedTeamList = sorted(self.teamList)
 		print("NIY")
 		return sortedTeamList
