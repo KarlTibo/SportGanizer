@@ -96,8 +96,7 @@ class TestPool:
 		del cls.teamAlice
 		del cls.teamBob
 		del cls.matchAB
-
-		
+	
 	def test_pool_initialization(cls):
 		assert cls.poolParty.name != "defaultPool"
 		assert cls.poolParty.name == "Party"
@@ -105,14 +104,17 @@ class TestPool:
 		assert cls.poolParty.numberOfMatches == 0
 		assert cls.poolParty.teamList == []
 		assert cls.poolParty.matchList == []
-
+	
 	def test_addTeam(cls):
 		cls.poolParty.addTeam(cls.teamAlice)
 		assert cls.poolParty.numberOfTeams == 1
 		assert cls.poolParty.teamList.count(cls.teamAlice) == 1
-		
+	
 	def test_addMatch(cls):
 		pass
+	
+	def test_ranking(cls):
+		assert cls.poolParty.ranking() == cls.poolParty.teamList
 
 
 class TestTournament:

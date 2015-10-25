@@ -14,6 +14,7 @@ class Team:
 			return True
 		else:
 			return False
+		print 'lt not implemented'
 	
 	def _addMatch(self, match):
 		self.matchList.append(match)
@@ -114,16 +115,13 @@ class Pool:
 	def addTeam(self, newTeam):
 		self.numberOfTeams += 1
 		self.teamList.append(newTeam)
-		print("NIY")
 		
 	def addMatch(self, matchName, teamANumber, teamBNumber):
 		newMatch = Match(matchName, teamList[teamANumber], teamList[teamBNumber])
 		self.matchList.append(newMatch)
-		print("NIY")
 		
 	def ranking(self):
 		sortedTeamList = sorted(self.teamList)
-		print("NIY")
 		return sortedTeamList
 
 class Tournament:
