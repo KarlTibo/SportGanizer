@@ -142,18 +142,42 @@ class TestPool:
 
 
 class TestTournament:
-	#Tests on class Tournament
- 	
 	def setup_class(cls):
 		cls.tournamentA = Tournament()
+		cls.poolA = Pool()
 		
 	def teardown_class(cls):
 		del cls.tournamentA
+		del cls.poolA
  	
-	def test_match_initialization(cls):
-		assert (cls.tournamentA.name == "no-name Tournament")
+	def testTournamentInitialization(cls):
+		assert (cls.tournamentA.name == None)
+		assert (cls.tournamentA.poolList == [])
 		
- 	def test_match_rename(cls):
+ 	def testInitializationRename(cls):
 		cls.tournamentA.rename("Ultimate Tournament")
 		assert (cls.tournamentA.name == "Ultimate Tournament")
+		
+	def testAddingPool(cls):
+		cls.tournamentA.addPool(cls.poolA)
+		assert (cls.tournamentA.poolList == [cls.poolA])
+		
+class TestSingleElimination:
+	def setup_class(cls):
+		cls.thePool = Pool('inputPool', [Team('team1'),Team('team2'),Team('team3'),Team('team4'),Team('team5'),Team('team6'),Team('team7'),Team('team8')])
+		cls.theTournament = SingleElimination()
+		cls.theTournament.setInputPool(cls.thePool)
+		
+	def teardown_class(cls):
+		del cls.theTournament
+		del cls.thePool
+		
+	def testSettingInputPool(cls):
+		assert (cls.theTournament.inputPool == cls.thePool)
+		
+	def testbuildAllPools(cls):
+		cls.theTournament.buildAllPools()
+		#NEED to write all assert	
+		
+		
 
