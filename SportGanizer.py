@@ -115,6 +115,8 @@ class Match:
 
 
 
+## Should correct the name for Pool also
+
 class Pool:
 	def __init__(self, initName = "defaultPool", initTeamList = []):
 		self.name = initName
@@ -135,11 +137,13 @@ class Pool:
 	def ranking(self):
 		sortedTeamList = sorted(self.teamList)
 		return sortedTeamList
-
-
+	
+	# IMPORTANT: the Pool shall receive the Teams input from the GUI
+	
+	
 class Tournament:
-	def __init__(self):
-		self.name = "no-name Tournament"
+	def __init__(self, name = None):
+		self.name = name
 		self.poolList = []
 			
 	def rename(self, name):
@@ -151,16 +155,46 @@ class Tournament:
 		
 class SingleElimination(Tournament):
 	def __init__(self):
-		Tournament.__init__(self)
-		self.rename('no-name single elimination')
-			
+		Tournament.__init__(self, 'single elimination')
+		self.inputPool = None
+		
+	def setInputPool(self,pool):
+		self.inputPool = pool
 	
+	def buildAllPools(self):
+		nOfLayers = log2(self.inputPool.numberOfTeams)
+		if float.is_integer(nOfLayers):
+			nOfSpots = int(2**nOfLayers)
+			for layer in range(nOfLayers):
+				nOfSpots = int(nOfSpots/2)
+				tempTeamList = [Team('dummyTeam'+str(i)) for i in range(nOfSpots)]
+				self.addPool(Pool(tempTeamList))
+				for i in range (nOfSpots):
+					self.poolList[layer].createMatch(i,i+1)
+		else:
+			print 'not implemented for unfitted number of teams, try with 2, 4, 8, 16,...'
+	
+	# TO BE CONTINUED 
 	'''
-	def buildNextPool(prevPool):
-		rankedTeamList = pool.Ranking()
-		nextPool = Pool()
-		for team in len(rankedTeamList)
-			nextPool.addTeam(rankedTeamList[0])
-			nextPool.addTeam(rankedTeamList[0])
-		self.addPool(nextPool)
-	'''	
+	def show():
+		for pool in poolList:
+			
+	def update(self):
+		if Pool.isAllMatchPlayed():
+			rankedTeamList = pool.Ranking()
+			#...
+		else:
+			pass
+			#could display match to play
+		print 'NYI'
+		# should consult stats and adjust teams
+	'''
+		
+	# can have a globalRanking and a temporaryRanking
+				
+if __name__ == "__main__":
+
+	pass
+	
+
+
