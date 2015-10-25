@@ -2,21 +2,12 @@
 from numpy import *
 
 
-###########################################################################################
-#Definition of the necessary objects
-
 class Team:
-	
-	numberOfTeams = 0
 	
 	def __init__(self, initName = "defaultTeam"):
 		self.name = initName 
 		self.matchList = []
 		self.nextMatchIndex = 0
-		Team.numberOfTeams += 1
-	
-	def __del__(self):
-		Team.numberOfTeams -= 1
 	
 	def _addMatch(self, match):
 		self.matchList.append(match)
@@ -28,7 +19,8 @@ class Team:
 		self.nextMatchIndex = self.nextMatchIndex + 1
 	
 	def _becomes(self, team):
-		#Possibly for crossovers
+		#Could it ultimately be the "=" operator ?
+		#Important for crossovers when a matchList already exist for an undetermined team
 		self.matchList.extend(team.matchList)
 		self._increaseNextMatchIndex()
 	
@@ -37,12 +29,14 @@ class Team:
 		tempName=self.name
 		tempNextMatchIndex=self.nextMatchIndex
 		self.matchList=team.matchList
+		
+	def __gt__(compTeam):
+		print "WARNING comparison operators for team are not implemented react dumbly"
+		return True
+	
 	#To implement : team stats, team delete?
 	#Functions :  swap(using deepcopy)
 	#_becomes : needs to erase future matches (crossovers)
-	
-
-#retest don't understand
 
 
 class Match:
@@ -71,6 +65,7 @@ class Match:
 			del dummyTeam
 		else:
 			pass
+			# SHOULD WARN
 	
 	def setWinner(self, team):
 		if self.winner.matchList == []: #Limit case that might need fixing
@@ -97,12 +92,16 @@ class Match:
 		
 	def teamIsNotInMatch_EXCEPTION(match, team):
 		print team.name+" "+"is not in"+" "+match.name
+		
+		
 	#To implement : match result, match location, match time, match versus?, match delete(+ team.removeMatch test)
 	# match winner, match loser
 	#if match already exists, copy itself to the existing match
 	#coding = and == operators of matches
 	#Functions : match.setResult(tests) and losers!!
 	# match.setVersus?
+
+
 
 class Pool:
 	def __init__(self, initName = "defaultPool"):
@@ -119,9 +118,31 @@ class Pool:
 
 
 
+class Tournament:
+	def __init__(self):
+		self.name = "no-name Tournament"
+		self.poolList = []
+			
+	def rename(self,name):
+		self.name = name
 
-
-
-
-
-
+	def addPool(self,pool):
+		self.poolList.append(pool)
+	
+	
+	
+class SingleElimination(Tournament):
+	def __init__(self):
+		Tournament.__init__(self)
+		self.rename('no-name single elimination')
+			
+	
+	'''
+	def buildNextPool(prevPool):
+		rankedTeamList = pool.Ranking()
+		nextPool = Pool()
+		for team in len(rankedTeamList)
+			nextPool.addTeam(rankedTeamList[0])
+			nextPool.addTeam(rankedTeamList[0])
+		self.addPool(nextPool)
+	'''	

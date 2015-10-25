@@ -15,7 +15,6 @@ class TestTeam:
 		assert (cls.teamAlice.name != "defaultTeam")
 		assert (cls.teamAlice.name == "Alice")
 		assert (cls.teamAlice.matchList == [])
-		assert Team.numberOfTeams == 1
 	
 	def test_increaseNextMatchIndex(cls):
 		cls.teamAlice._increaseNextMatchIndex()
@@ -68,6 +67,7 @@ class TestMatch:
 		cls.matchW1W2.setWinner(cls.teamC)
 		assert cls.matchAB.winner == cls.teamAlice
 		assert cls.matchW1W2.winner == cls.teamC
+		
 	
 	
 	
