@@ -2,16 +2,13 @@
 from numpy import *
 
 
-###########################################################################################
-#Definition of the necessary objects
-
 class Team:
-		
+
 	def __init__(self, initName = "defaultTeam"):
 		self.name = initName 
 		self.matchList = []
 		self.nextMatchIndex = 0
-	
+
 	def __lt__(self, team_to_compare):
 		if :
 			return True
@@ -41,7 +38,7 @@ class Team:
 	#To implement : team stats, team delete?
 	#Functions :  swap(using deepcopy)
 	#_becomes : needs to erase future matches (crossovers)
-	
+
 
 class Match:
 	def __init__(self, initName = "defaultMatch", initTeamA = Team(), initTeamB = Team(), initWeight = 0):
@@ -69,7 +66,7 @@ class Match:
 			del dummyTeam
 		else:
 			pass # SHOULD WARN
-	
+
 	def setWinner(self, team):
 		if self.winner.matchList == []: #Limit case that might need fixing
 			#team.wasLastMatch()        Needs implementation
@@ -104,6 +101,8 @@ class Match:
 	#Functions : match.setResult(tests) and losers!!
 	# match.setVersus?
 
+
+
 class Pool:
 	def __init__(self, initName = "defaultPool", initTeamList = []):
 		self.name = initName
@@ -126,8 +125,6 @@ class Pool:
 		sortedTeamList = sorted(self.teamList)
 		print("NIY")
 		return sortedTeamList
-	
-
 
 class Tournament:
 	def __init__(self):
@@ -136,7 +133,6 @@ class Tournament:
 			
 	def rename(self,name):
 		self.name = name
- 
 
 	def addPool(self,pool):
 		self.poolList.append(pool)
@@ -158,12 +154,3 @@ class SingleElimination(Tournament):
 			nextPool.addTeam(rankedTeamList[0])
 		self.addPool(nextPool)
 	'''	
-
-
-
-
-
-
-
-
-

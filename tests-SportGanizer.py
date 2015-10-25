@@ -68,8 +68,6 @@ class TestMatch:
 		assert cls.matchAB.winner == cls.teamAlice
 		assert cls.matchW1W2.winner == cls.teamC
 	
-	
-	
 	"""
 	##Test setResult
 	matchW1W2 = Match("Match W1-W2", matchAB.winner, matchCD.winner)
@@ -124,7 +122,8 @@ class TestTournament:
  	
 	def test_match_initialization(cls):
 		assert (cls.tournamentA.name == "no-name Tournament")
+		
  	def test_match_rename(cls):
 		cls.tournamentA.rename("Ultimate Tournament")
 		assert (cls.tournamentA.name == "Ultimate Tournament")
-		 
+
