@@ -26,10 +26,10 @@ class TestMatch:
 	def setup_class(cls):
 		cls.teamAlice = Team("Alice")
 		cls.teamBob = Team("Bob")
-		cls.matchAB = Match("MatchAB", cls.teamAlice, cls.teamBob)	
+		cls.matchAB = Match(cls.teamAlice, cls.teamBob,"MatchAB")	
 		cls.teamC = Team("C")
 		cls.teamD = Team("D")
-		cls.matchCD = Match("MatchCD", cls.teamC, cls.teamD)
+		cls.matchCD = Match(cls.teamC, cls.teamD,"MatchCD")
 		
 	def teardown_class(cls):
 		del cls.teamAlice
@@ -50,7 +50,7 @@ class TestMatch:
 		assert  cls.teamBob.matchList[0] == cls.matchAB
 	
 	def test_replaceDummyTeam(cls):
-		cls.matchW1W2 = Match("Match W1-W2", cls.matchAB.winner, cls.matchCD.winner)	
+		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2")	
 		cls.matchW1W2.replaceDummyTeam(cls.matchAB.winner, cls.teamAlice)
 		assert cls.matchW1W2.teamA == cls.teamAlice
 		assert cls.teamAlice.matchList[1] == cls.matchW1W2
@@ -59,7 +59,7 @@ class TestMatch:
 		assert cls.matchW1W2.teamB.nextMatchIndex == 1
 	
 	def test_setWinner(cls):
-		cls.matchW1W2 = Match("Match W1-W2", cls.matchAB.winner, cls.matchCD.winner)
+		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2",)
 		cls.matchCD.setWinner(cls.teamC)
 		assert cls.matchCD.winner == cls.teamC
 		assert cls.matchW1W2.teamB == cls.teamC
@@ -110,7 +110,7 @@ class TestPool:
 		assert cls.poolParty.teamList.count(cls.teamAlice) == 1
 		cls.poolParty.addTeam(cls.teamBob)
 		assert cls.poolParty.numberOfTeams == 2
-		cls.poolParty.createMatch("matchTest", 0, 1)
+		cls.poolParty.createMatch(0, 1, "matchTest")
 		assert cls.poolParty.numberOfMatches == 1
 		assert cls.poolParty.matchList[0].name == "matchTest"
 		assert cls.poolParty.teamList[0] == cls.teamAlice

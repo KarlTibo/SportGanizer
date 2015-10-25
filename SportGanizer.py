@@ -3,17 +3,13 @@ from numpy import *
 
 
 class Team:
-
-	def __init__(self, initName = "defaultTeam"):
-		self.name = initName 
+	def __init__(self, name = None):
+		self.name = name 
 		self.matchList = []
 		self.nextMatchIndex = 0
 
 	def __lt__(self, team_to_compare):
-		if True:
-			return True
-		else:
-			return False
+		return False
 		print 'lt not implemented'
 	
 	def _addMatch(self, match):
@@ -36,19 +32,23 @@ class Team:
 		tempName=self.name
 		tempNextMatchIndex=self.nextMatchIndex
 		self.matchList=team.matchList
+		
+	def rename(self, name):
+		self.name=name
+		
 	#To implement : team stats, team delete?
 	#Functions :  swap(using deepcopy)
 	#_becomes : needs to erase future matches (crossovers)
 
 
 class Match:
-	def __init__(self, initName = "defaultMatch", initTeamA = Team(), initTeamB = Team(), initWeight = 0):
-		self.name = initName
-		self.teamA = initTeamA
+	def __init__(self, teamA, teamB, name = None, weight = 0):
+		self.name = name
+		self.teamA = teamA
 		self.teamA._addMatch(self)
-		self.teamB = initTeamB
+		self.teamB = teamB
 		self.teamB._addMatch(self)
-		self.weight = initWeight
+		self.weight = weight
 		self.winner = Team(self.name+"_"+"Winner")
 		self.loser = Team(self.name+"_"+"Loser")
 		
@@ -116,14 +116,15 @@ class Pool:
 		self.numberOfTeams += 1
 		self.teamList.append(newTeam)
 		
-	def createMatch(self, matchName, teamANumber, teamBNumber):
+	def createMatch(self, teamANumber, teamBNumber, matchName = None):
 		self.numberOfMatches += 1
-		self.newMatch = Match(matchName, self.teamList[teamANumber], self.teamList[teamBNumber])
+		self.newMatch = Match(self.teamList[teamANumber], self.teamList[teamBNumber], matchName)
 		self.matchList.append(self.newMatch)
 		
 	def ranking(self):
 		sortedTeamList = sorted(self.teamList)
 		return sortedTeamList
+
 
 class Tournament:
 	def __init__(self):
@@ -136,8 +137,7 @@ class Tournament:
 	def addPool(self, pool):
 		self.poolList.append(pool)
 	
-	
-	
+		
 class SingleElimination(Tournament):
 	def __init__(self):
 		Tournament.__init__(self)
