@@ -67,8 +67,8 @@ class Match:
 		self.teamB = teamB
 		self.teamB._addMatch(self)
 		self.weight = weight
-		self.winner = Team(self.name+"Winner")
-		self.loser = Team(self.name+"Loser")
+		self.winner = Team(str(self.name)+"Winner")
+		self.loser = Team(str(self.name)+"Loser")
 		
 	def replaceDummyTeam(self, dummyTeam, newTeam):
 		if self.teamA == dummyTeam:
@@ -128,7 +128,7 @@ class Match:
 class Pool:
 	def __init__(self, initName = "defaultPool", initTeamList = []):
 		self.name = initName
-		self.numberOfTeams = 0
+		self.numberOfTeams = len(initTeamList)
 		self.numberOfMatches = 0
 		self.teamList = initTeamList
 		self.matchList = []
@@ -170,10 +170,11 @@ class SingleElimination(Tournament):
 		self.inputPool = pool
 	
 	def buildAllPools(self):
+		print self.inputPool.numberOfTeams
 		nOfLayers = log2(self.inputPool.numberOfTeams)
 		if float.is_integer(nOfLayers):
 			nOfSpots = int(2**nOfLayers)
-			for layer in range(nOfLayers):
+			for layer in range(int(nOfLayers)):
 				nOfSpots = int(nOfSpots/2)
 				tempTeamList = [Team('dummyTeam'+str(i)) for i in range(nOfSpots)]
 				self.addPool(Pool(tempTeamList))
@@ -181,6 +182,12 @@ class SingleElimination(Tournament):
 					self.poolList[layer].createMatch(i,i+1)
 		else:
 			print 'not implemented for unfitted number of teams, try with 2, 4, 8, 16,...'
+		
+	def show(self):
+		for pool in self.poolList:
+			print '\n'+pool.name+'\n'
+			for match in pool.matchList:
+				print match.name+' : '+match.TeamA.name+' vs '+match.TeamA.name+'\n'
 	
 	# TO BE CONTINUED 
 	'''
@@ -201,8 +208,11 @@ class SingleElimination(Tournament):
 	# can have a globalRanking and a temporaryRanking
 				
 if __name__ == "__main__":
-
-	pass
 	
-
-
+	thePool = Pool('inputPool', [Team('team1'),Team('team2'),Team('team3'),Team('team4'),Team('team5'),Team('team6'),Team('team7'),Team('team8')])
+	theTournament = SingleElimination()
+	theTournament.setInputPool(thePool)
+	#don't work yet
+	#theTournament.buildAllPools()
+	theTournament.show()
+	

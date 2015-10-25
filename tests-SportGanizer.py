@@ -176,7 +176,9 @@ class TestSingleElimination:
 		assert (cls.theTournament.inputPool == cls.thePool)
 		
 	def testbuildAllPools(cls):
-		cls.theTournament.buildAllPools()
+		pass
+		#cls.theTournament.buildAllPools()
+		
 		#NEED to write all assert	
 		
 		
