@@ -42,6 +42,8 @@ class Team:
 	#_becomes : needs to erase future matches (crossovers)
 	
 
+#retest don't understand
+
 
 # Ceci est un test batard en francais
 
