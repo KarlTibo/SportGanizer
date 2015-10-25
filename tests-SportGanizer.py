@@ -1,4 +1,4 @@
-from to_be_named import *
+from SportGanizer import *
 #import unittest
 import pytest
 
@@ -68,27 +68,20 @@ class TestMatch:
 		assert cls.matchAB.winner == cls.teamAlice
 		assert cls.matchW1W2.winner == cls.teamC
 		
+		
+class TestTournament:
+	#Tests on class Tournament
 	
+	def setup_class(cls):
+		cls.tournamentA = Tournament()
+		
+	def teardown_class(cls):
+		del cls.tournamentA
 	
+	def test_match_initialization(cls):
+		assert (cls.tournamentA.name == "no-name Tournament")
 	
-	"""
-	##Test setResult
-	matchW1W2 = Match("Match W1-W2", matchAB.winner, matchCD.winner)
-	#matchCD.setResult(teamC)
-	
-	#Tests on class Team and Match
-	teamAlice = Team("Alice")
-	teamBob = Team("Bob")
-	matchAB = Match("MatchAB", teamAlice, teamBob)
-	teamAlice._becomes(teamBob)
-	assert len(teamAlice.matchList) == 2
-	assert teamAlice.matchList[1] == matchAB
-	assert teamAlice.nextMatchIndex == 1
-	
-	
-	#Tests on class Pool
-	poolParty = Pool("Party")
-	assert poolParty.name != "defaultPool"
-	assert poolParty.name == "Party"
-	"""
-	
+	def test_match_rename(cls):
+		cls.tournamentA.rename("Ultimate Tournament")
+		assert (cls.tournamentA.name == "Ultimate Tournament")
+		
