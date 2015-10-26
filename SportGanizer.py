@@ -10,22 +10,31 @@ class Team:
 		self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
 
 	def __lt__(self, teamToCompare):
-		selfHasLessWins = self.stats['numberOfWins'] < teamToCompare.stats['numberOfWins']
-		equalWins = self.stats['numberOfWins'] == teamToCompare.stats['numberOfWins']
-		selfHasMoreLosses = self.stats['numberOfLosses'] > teamToCompare.stats['numberOfLosses']
-		equalLosses = self.stats['numberOfLosses'] == teamToCompare.stats['numberOfLosses']
-		selfHasLessScoresFor = self.stats['scoresFor'] < teamToCompare.stats['scoresFor']
-		equalScoresFor = self.stats['scoresFor'] == teamToCompare.stats['scoresFor']
-		selfHasMoreScoresAgainst = self.stats['scoresAgainst'] > teamToCompare.stats['scoresAgainst']
+		selfWins = self.stats['numberOfWins']
+		compWins = teamToCompare.stats['numberOfWins']
+		selfLosses = self.stats['numberOfLosses']
+		compLosses = teamToCompare.stats['numberOfLosses']
+		selfScoreFor = self.stats['scoresFor']
+		compScoreFor = teamToCompare.stats['scoresFor']
+		selfScoreAgst = self.stats['scoresAgainst']
+		compScoreAgst = teamToCompare.stats['scoresAgainst']
 		
-		if selfHasLessWins:
+		isSelfHasLessWins = selfWins < compWins
+		isEqualWins = selfWins == compWins
+		isSelfHasMoreLosses = selfLosses > compLosses
+		isEqualLosses = selfLosses == compLosses
+		isSelfHasLessScoresFor = selfScoreFor < compScoreFor
+		isEqualScoresFor = selfScoreFor == compScoreFor
+		isSelfHasMoreScoresAgainst = selfScoreAgst > compScoreAgst
+		
+		if isSelfHasLessWins:
 			return True
-		elif equalWins and selfHasMoreLosses:
+		elif isEqualWins and isSelfHasMoreLosses:
 			return True
-		elif equalWins and equalLosses:
-			if selfHasLessScoresFor:
+		elif isEqualWins and isEqualLosses:
+			if isSelfHasLessScoresFor:
 				return True
-			elif equalScoresFor and selfHasMoreScoresAgainst:
+			elif isEqualScoresFor and isSelfHasMoreScoresAgainst:
 				return True
 		else:
 			return False
