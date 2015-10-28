@@ -19,22 +19,22 @@ class Team:
 		selfScoreAgst = self.stats['scoresAgainst']
 		compScoreAgst = teamToCompare.stats['scoresAgainst']
 		
-		isSelfHasLessWins = selfWins < compWins
-		isEqualWins = selfWins == compWins
-		isSelfHasMoreLosses = selfLosses > compLosses
-		isEqualLosses = selfLosses == compLosses
-		isSelfHasLessScoresFor = selfScoreFor < compScoreFor
-		isEqualScoresFor = selfScoreFor == compScoreFor
-		isSelfHasMoreScoresAgainst = selfScoreAgst > compScoreAgst
+		SelfHasLessWins = selfWins < compWins
+		EqualWins = selfWins == compWins
+		SelfHasMoreLosses = selfLosses > compLosses
+		EqualLosses = selfLosses == compLosses
+		SelfHasLessScoresFor = selfScoreFor < compScoreFor
+		EqualScoresFor = selfScoreFor == compScoreFor
+		SelfHasMoreScoresAgainst = selfScoreAgst > compScoreAgst
 		
-		if isSelfHasLessWins:
+		if SelfHasLessWins:
 			return True
-		elif isEqualWins and isSelfHasMoreLosses:
+		elif EqualWins and SelfHasMoreLosses:
 			return True
-		elif isEqualWins and isEqualLosses:
-			if isSelfHasLessScoresFor:
+		elif EqualWins and EqualLosses:
+			if SelfHasLessScoresFor:
 				return True
-			elif isEqualScoresFor and isSelfHasMoreScoresAgainst:
+			elif EqualScoresFor and SelfHasMoreScoresAgainst:
 				return True
 		else:
 			return False
