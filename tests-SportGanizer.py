@@ -16,10 +16,12 @@ class TestTeam:
 		assert cls.teamAlice.name == "Alice"
 		assert cls.teamAlice.matchList == []
 	
+	'''
 	def test_increaseNextMatchIndex(cls):
 		cls.teamAlice._increaseNextMatchIndex()
 		assert cls.teamAlice.nextMatchIndex == 1
-	
+	'''
+
 	def test_countWins_zero(cls):
 		# NOTE : see class TestTeamAndMatch for non-zero case 
 		assert cls.teamAlice.countWins() == 0
@@ -27,6 +29,7 @@ class TestTeam:
 	def test_countLosses_zero(cls):
 		assert cls.teamAlice.countLosses() == 0
 
+	'''
 	def test_sorted(cls):
 		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
 		cls.teamBob.stats['numberOfLosses'] += 1
@@ -40,7 +43,7 @@ class TestTeam:
 		cls.teamAlice.stats['scoresAgainst'] += 1
 		assert cls.teamAlice < cls.teamBob
 		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamBob
-		
+	'''		
 		
 class TestMatch:
 	
@@ -73,6 +76,25 @@ class TestMatch:
 		assert cls.teamAlice.matchList[0] == cls.matchAB
 		assert cls.teamBob.matchList[0] == cls.matchAB
 	
+	def test_setScore(cls):
+		cls.matchAB.setScore(cls.teamAlice,5)
+		cls.matchAB.setScore(cls.teamBob,2)
+		assert cls.matchAB.scoreA == 5
+		assert cls.matchAB.scoreB == 2
+		cls.matchAB.setScore(cls.teamBob,3,cls.teamAlice,5)
+		assert cls.matchAB.scoreA == 5
+		assert cls.matchAB.scoreB == 3
+		cls.matchAB.setScore(cls.teamCharlie,7)
+		cls.matchAB.setScore(cls.teamBob,7,cls.teamDave)
+		assert cls.matchAB.scoreB == 7
+
+	def test_endMatch(cls):
+		cls.matchAB.setScore(cls.teamAlice,7,cls.teamBob,4)
+		cls.matchAB.endMatch()
+		assert cls.matchAB.ended
+		assert cls.matchAB.winner == cls.teamAlice
+		assert cls.matchAB.loser == cls.teamBob
+
 	'''
 	def test_replaceDummyTeam(cls):
 		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2")	

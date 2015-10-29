@@ -5,26 +5,87 @@ class Team:
 	def __init__(self, name = None):
 		self.name = name 
 		self.matchList = []
-		self.nextMatchIndex = 0
-		# TODO : make stats functions in relevant objects
-		self.stats = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Stats inside each pool the team participates in, resetted after each pool ends.
-		self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
+		#self.nextMatchIndex = 0
+		#self.stats = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Stats inside each pool the team participates in, resetted after each pool ends.
+		#self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
+
+	def rename(self, name):
+		self.name=name
+
+	def _addMatch(self, match):
+		self.matchList.append(match)
+	
+	def _removeMatch(self, match):
+		self.matchList.remove(match)
+	
+	# NOTE : This guy could be a function that takes advantage of Match.ended
+	def _increaseNextMatchIndex(self):
+		self.nextMatchIndex = self.nextMatchIndex + 1
+	
+	# NOTE : untested anyway, probably useless... (think about crossover)
+	'''
+	def _swap(self, team):
+		tempMatchList=self.matchList
+		tempName=self.name
+		tempNextMatchIndex=self.nextMatchIndex
+		self.matchList=team.matchList
+	'''
+
+	# WARNING : it is a bit intense to just lose track of team after this acts; OK when team is a dummy object, but otherwise???
+	# WARNING : becomes cannot work - a function of team can't reassing one of its arguments (self or team)... damn it!
+	def becomes(self, team):
+		self = team
+	
+
+	# TODO : test this: need EndMatch to work - need becomes to work... major issue
+	def countWins(self):
+		nOfWins = 0
+		for match in self.matchList:
+			if match.winner == self :
+				nOfWins += 1
+			else : pass
+		return nOfWins
+
+	# TODO : test this:
+	def countLosses(self):
+		nOfLosses = 0
+		for match in self.matchList:
+			if match.loser == self :
+				nOfLosses += 1
+			else : pass
+		return nOfLosses
+
+	# TODO : test this:
+	def countScoreFor(self):
+		nOfScoreFor = 0
+		for match in self.matchList:
+			if match.teamA == self:
+				nOfScoreFor += match.scoreA
+			else :
+				nOfScoreFor += match.scoreB
+
+	# TODO : test this:
+	def countScoreAgainst(self):
+		nOfScoreAgainst = 0
+		for match in self.matchList:
+			if match.teamA == self:
+				nOfScoreFor += match.scoreB
+			else :
+				nOfScoreFor += match.scoreA
+
+
 
 	def __lt__(self, teamToCompare):
-		selfLosses = self.stats['numberOfLosses']
-		compLosses = teamToCompare.stats['numberOfLosses']
-		selfScoreFor = self.stats['scoresFor']
-		compScoreFor = teamToCompare.stats['scoresFor']
-		selfScoreAgst = self.stats['scoresAgainst']
-		compScoreAgst = teamToCompare.stats['scoresAgainst']
-		
+
 		SelfHasLessWins = self.countWins() < teamToCompare.countWins()
 		EqualWins = self.countWins() == teamToCompare.countWins()
-		SelfHasMoreLosses = selfLosses > compLosses
-		EqualLosses = selfLosses == compLosses
-		SelfHasLessScoresFor = selfScoreFor < compScoreFor
-		EqualScoresFor = selfScoreFor == compScoreFor
-		SelfHasMoreScoresAgainst = selfScoreAgst > compScoreAgst
+		SelfHasMoreLosses = self.countLosses() > teamToCompare.countLosses()
+		EqualLosses = self.countLosses() == teamToCompare.countLosses()
+		
+		# TODO : before to create functions countScoresFor() and countScoresAgainst() we need to manage score in class Match
+		SelfHasLessScoresFor = False
+		EqualScoresFor = False
+		SelfHasMoreScoresAgainst = True
 		
 		if SelfHasLessWins:
 			return True
@@ -38,46 +99,7 @@ class Team:
 		else:
 			return False
 
-	def _addMatch(self, match):
-		self.matchList.append(match)
-	
-	def _removeMatch(self, match):
-		self.matchList.remove(match)
-	
-	def _increaseNextMatchIndex(self):
-		self.nextMatchIndex = self.nextMatchIndex + 1
-	
-	def _becomes(self, team):
-		# TODO :  
-		#Could it ultimately be the "=" operator ?
-		#Important for crossovers when a matchList already exist for an undetermined team
-		self.matchList.extend(team.matchList)
-		self._increaseNextMatchIndex()
-	
-	def _swap(self, team):
-		tempMatchList=self.matchList
-		tempName=self.name
-		tempNextMatchIndex=self.nextMatchIndex
-		self.matchList=team.matchList
-		
-	def countWins(self):
-		nOfWins = 0
-		for match in self.matchList:
-			if match.winner == self :
-				nOfWins += 1
-			else : pass
-		return nOfWins
 
-	def countLosses(self):
-		nOfLosses = 0
-		for match in self.matchList:
-			if match.loser == self :
-				nOfLosses += 1
-			else : pass
-		return nOfLosses
-
-	def rename(self, name):
-		self.name=name
 		
 	#To implement : team stats, team delete?, __lt__ conditionned on if self has beaten other team in the pool,
 	#Functions :  swap(using deepcopy)
@@ -87,14 +109,55 @@ class Team:
 class Match:
 	def __init__(self, teamA, teamB, name = None, weight = 0):
 		self.name = name
+		self.weight = weight
+
 		self.teamA = teamA
 		self.teamA._addMatch(self)
 		self.teamB = teamB
 		self.teamB._addMatch(self)
-		self.weight = weight
-		self.winner = Team(str(self.name)+" winner")
-		self.loser = Team(str(self.name)+" loser")
-	
+
+		self.ended = False
+		self.tie = False
+		self.scoreA = 0
+		self.scoreB = 0
+		self.winner = Team()
+		self.loser = Team()
+
+
+	def setScore(self, team, score, secondTeam = None, secondScore = None):
+		assert not self.ended
+		if team == self.teamA:
+			self.scoreA = score
+		elif team == self.teamB:
+			self.scoreB = score
+		else:
+			print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
+			# TODO : decide what happens then...
+		if secondTeam == None and secondScore == None:
+			pass
+		elif secondTeam != None and secondScore != None and secondTeam != team:
+			self.setScore(secondTeam,secondScore)
+		else:
+			print "\tWARNING : something is wrong with second team input"
+			# TODO : handle exceptions
+
+
+	# NOTE : we could choose to also set score when ending match, just add arguments and call setScore() 
+	def endMatch(self):
+		assert not self.ended
+		if self.scoreA == self.scoreB:
+			self.tie = True
+			print "WARNING : no behaviour decided for a tie"
+			pass # TODO : who wins? who loses?
+		# WARNING : becomes cannot work - a function of team can't reassing one of its arguments (self or team)... damn it!
+		elif self.scoreA > self.scoreB:
+			self.winner = self.teamA #### WRONG!!!
+			self.loser = self.teamB #### WRONG !!!
+		else :
+			self.winner = self.teamB #### WRONG !!!
+			self.loser = self.teamA #### WRONG !!!
+		self.ended = True
+
 	'''	
 	def replaceDummyTeam(self, dummyTeam, newTeam):
 		if self.teamA == dummyTeam:
