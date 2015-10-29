@@ -171,24 +171,24 @@ class Tournament:
 	
 		
 class SingleElimination(Tournament):
+	''' Must input a pool with method setInputPool before using other functions. '''
+	
+	# TODO: Finish cleaning buildAllPools in smaller functions buildFirstPool, buildOtherPools
+	
 	def __init__(self):
 		Tournament.__init__(self, 'single elimination')
-		self.inputPool = None
 		
-	def setInputPool(self,pool):
-		self.inputPool = pool
-	
+	def setInputPool(self, initPool):
+		self.inputPool = initPool
+		self.nOfTeams = self.inputPool.numberOfTeams
+		self.additionnalTeams = self.nOfTeams%(2**(int(log2(self.nOfTeams))))
+		self.nTeamsIsPowerOf2 = (self.additionnalTeams == 0)
+		
 	def buildAllPools(self):
-
-		tempPool = self.inputPool
-		nOfTeams = tempPool.numberOfTeams/2
-		for i in range (tempPool.numberOfTeams/2):
-			tempPool.createMatch(i,i+nOfTeams/2, 'match_0-'+str(i))
-		self.addPool(tempPool)
-	
-		nOfLayers = log2(self.inputPool.numberOfTeams)-1
-
-		if float.is_integer(nOfLayers):
+		nOfLayers = self.calcNumberOfLayers(self.nOfTeams)
+		
+		if self.nTeamsIsPowerOf2:
+			self.buildFirstPool()
 			for layer in range(int(nOfLayers)):
 				nOfTeams = int(2**(nOfLayers-layer))
 				tempTeamList = [Team('dummyTeam'+str(i)) for i in range(nOfTeams)]
@@ -198,8 +198,28 @@ class SingleElimination(Tournament):
 					tempPool.createMatch(i,i+nOfTeams/2, 'match_'+str(layer)+'-'+str(i))
 				self.addPool(tempPool)
 		else:
+			self.buildInputPool()
 			print 'not implemented for unfitted number of teams, try with 2, 4, 8, 16,...'
 		
+	def buildFirstPool(self):
+		if self.nTeamsIsPowerOf2:
+			for i in range (self.nOfTeams/2):
+				self.inputPool.createMatch(i,i+self.nOfTeams/2, 'match_0-'+str(i))
+				self.addPool(self.inputPool)
+		else:
+			'not implemented for unfitted number of teams, try with 2, 4, 8, 16,...'
+			
+	def buildOtherPool(self,nOfTeams):
+		pass
+		
+	def calcNumberOfLayers(self, nOfTeams):
+		if self.nTeamsIsPowerOf2:
+			nOfLayers = log2(nOfTeams)
+			return nOfLayers
+		else:
+			nOfLayers = int(log2(nOfTeams))+1
+			return nOfLayers
+
 	def show(self):
 		for pool in self.poolList:
 			print '\n'+str(pool.name)+'\n'
