@@ -1,9 +1,7 @@
 from SportGanizer import *
-#import unittest
 import pytest
 
 class TestTeam:
-	#Tests on class Team in to_be_named.py
 	
 	def setup_class(cls):
 		cls.teamAlice = Team("Alice")
@@ -14,14 +12,18 @@ class TestTeam:
 		del cls.teamBob
 	
 	def test_team_initialization(cls):
-		assert (cls.teamAlice.name != "defaultTeam")
-		assert (cls.teamAlice.name == "Alice")
-		assert (cls.teamAlice.matchList == [])
+		assert cls.teamAlice.name != "defaultTeam"
+		assert cls.teamAlice.name == "Alice"
+		assert cls.teamAlice.matchList == []
 	
 	def test_increaseNextMatchIndex(cls):
 		cls.teamAlice._increaseNextMatchIndex()
-		assert (cls.teamAlice.nextMatchIndex == 1)
-		
+		assert cls.teamAlice.nextMatchIndex == 1
+	
+	def test_countWins(cls):
+		assert cls.teamAlice.countWins() == 0
+		# TODO : test case with wins
+
 	def test_sorted(cls):
 		cls.teamAlice.stats['numberOfWins'] += 1
 		assert cls.teamAlice > cls.teamBob
@@ -41,57 +43,59 @@ class TestTeam:
 		
 		
 class TestMatch:
-	#Tests on class Match
 	
 	def setup_class(cls):
 		cls.teamAlice = Team("Alice")
 		cls.teamBob = Team("Bob")
+		cls.teamCharlie = Team("Charlie")
+		cls.teamDave = Team("Dave")
 		cls.matchAB = Match(cls.teamAlice, cls.teamBob,"MatchAB")	
-		cls.teamC = Team("C")
-		cls.teamD = Team("D")
-		cls.matchCD = Match(cls.teamC, cls.teamD,"MatchCD")
+		cls.matchCD = Match(cls.teamCharlie, cls.teamDave,"MatchCD")
 		
 	def teardown_class(cls):
 		del cls.teamAlice
 		del cls.teamBob
+		del cls.teamCharlie
+		del cls.teamDave
 		del cls.matchAB
+		del cls.matchCD
 	
 	def test_match_initialization(cls):
-		assert (cls.matchAB.name != "defaultMatch")
-		assert (cls.matchAB.name == "MatchAB")
-		assert (cls.matchAB.teamA.name == "Alice")
-		assert (cls.matchAB.teamB.name == "Bob")
-		assert (cls.matchAB.weight == 0)
-		assert (cls.teamAlice.matchList.count(cls.matchAB) == 1)
-		assert (cls.teamBob.matchList.count(cls.matchAB) == 1)
-		assert (cls.matchAB.teamA.matchList.count(cls.matchAB) == 1)
-		assert (cls.matchAB.teamB.matchList.count(cls.matchAB) == 1)
-		assert  cls.teamAlice.matchList[0] == cls.matchAB
-		assert  cls.teamBob.matchList[0] == cls.matchAB
+		assert cls.matchAB.name != "defaultMatch"
+		assert cls.matchAB.name == "MatchAB"
+		assert cls.matchAB.teamA.name == "Alice"
+		assert cls.matchAB.teamB.name == "Bob"
+		assert cls.matchAB.weight == 0
+		assert cls.teamAlice.matchList.count(cls.matchAB) == 1
+		assert cls.teamBob.matchList.count(cls.matchAB) == 1
+		assert cls.matchAB.teamA.matchList.count(cls.matchAB) == 1
+		assert cls.matchAB.teamB.matchList.count(cls.matchAB) == 1
+		assert cls.teamAlice.matchList[0] == cls.matchAB
+		assert cls.teamBob.matchList[0] == cls.matchAB
 	
 	def test_replaceDummyTeam(cls):
 		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2")	
 		cls.matchW1W2.replaceDummyTeam(cls.matchAB.winner, cls.teamAlice)
 		assert cls.matchW1W2.teamA == cls.teamAlice
 		assert cls.teamAlice.matchList[1] == cls.matchW1W2
-		cls.matchW1W2.replaceDummyTeam(cls.matchCD.winner, cls.teamC)
-		assert cls.matchW1W2.teamB == cls.teamC
+		cls.matchW1W2.replaceDummyTeam(cls.matchCD.winner, cls.teamCharlie)
+		assert cls.matchW1W2.teamB == cls.teamCharlie
 		assert cls.matchW1W2.teamB.nextMatchIndex == 1
 	
 	def test_setWinner(cls):
-		cls.matchCD.setWinner(cls.teamC)
+		cls.matchCD._setWinner(cls.teamCharlie)
 		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2",)
-		assert cls.matchCD.winner == cls.teamC
-		assert cls.matchW1W2.teamB == cls.teamC
-		cls.matchAB.setWinner(cls.teamAlice)
-		cls.matchW1W2.setWinner(cls.teamC)
+		assert cls.matchCD.winner == cls.teamCharlie
+		assert cls.matchW1W2.teamB == cls.teamCharlie
+		cls.matchAB._setWinner(cls.teamAlice)
+		cls.matchW1W2._setWinner(cls.teamCharlie)
 		assert cls.matchAB.winner == cls.teamAlice
-		assert cls.matchW1W2.winner == cls.teamC
+		assert cls.matchW1W2.winner == cls.teamCharlie
 	
 	"""
 	##Test setResult
 	matchW1W2 = Match("Match W1-W2", matchAB.winner, matchCD.winner)
-	#matchCD.setResult(teamC)
+	#matchCD.setResult(teamCharlie)
 	
 	#Tests on class Team and Match
 	teamAlice = Team("Alice")
@@ -102,6 +106,31 @@ class TestMatch:
 	assert teamAlice.matchList[1] == matchAB
 	assert teamAlice.nextMatchIndex == 1
 	"""
+
+
+class TestTeamAndMatch:
+
+	def setup_class(cls):
+		cls.teamAlice = Team("Alice")
+		cls.teamBob = Team("Bob")
+		cls.teamCharlie = Team("Charlie")
+		cls.teamDave = Team("Dave")
+		cls.matchAB = Match(cls.teamAlice,cls.teamBob)
+		cls.matchAC = Match(cls.teamAlice,cls.teamCharlieharlie)
+		cls.matchAD = Match(cls.teamAlice,cls.teamDave)
+		# TODO : cls.matchAB.setResult()
+
+	def teardown_class(cls):
+		del cls.teamAlice 
+		del cls.teamBob
+		del cls.teamCharlie
+		del cls.teamDave
+		del cls.matchAB 
+		del cls.matchAC 
+		del cls.matchAD 
+
+	# TODO : def test_Team_countWins():
+
 	
 class TestPool:
 	#Tests on class Pool

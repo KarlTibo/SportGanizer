@@ -6,6 +6,7 @@ class Team:
 		self.name = name 
 		self.matchList = []
 		self.nextMatchIndex = 0
+		# TODO : make stats functions in relevant objects
 		self.stats = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Stats inside each pool the team participates in, resetted after each pool ends.
 		self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
 
@@ -38,7 +39,7 @@ class Team:
 				return True
 		else:
 			return False
-	
+
 	def _addMatch(self, match):
 		self.matchList.append(match)
 	
@@ -49,6 +50,7 @@ class Team:
 		self.nextMatchIndex = self.nextMatchIndex + 1
 	
 	def _becomes(self, team):
+		# TODO :  
 		#Could it ultimately be the "=" operator ?
 		#Important for crossovers when a matchList already exist for an undetermined team
 		self.matchList.extend(team.matchList)
@@ -60,6 +62,14 @@ class Team:
 		tempNextMatchIndex=self.nextMatchIndex
 		self.matchList=team.matchList
 		
+	def countWins(self):
+		nOfWins = 0
+		for match in self.matchList:
+			if match.winner == self :
+				nOfWins += 1
+			else : pass
+		return nOfWins
+
 	def rename(self, name):
 		self.name=name
 		
@@ -76,8 +86,8 @@ class Match:
 		self.teamB = teamB
 		self.teamB._addMatch(self)
 		self.weight = weight
-		self.winner = Team(str(self.name)+"Winner")
-		self.loser = Team(str(self.name)+"Loser")
+		self.winner = Team(str(self.name)+" winner")
+		self.loser = Team(str(self.name)+" loser")
 		
 	def replaceDummyTeam(self, dummyTeam, newTeam):
 		if self.teamA == dummyTeam:
@@ -95,7 +105,7 @@ class Match:
 		else:
 			pass # SHOULD WARN
 
-	def setWinner(self, team):
+	def _setWinner(self, team):
 		if self.winner.matchList == []: #Limit case that might need fixing (end of the tournament?)
 			#team.wasLastMatch()        Needs implementation
 			self.winner = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
@@ -113,9 +123,9 @@ class Match:
 			teamIsNotInMatch_EXCEPTION(self, teamB)
 		else:
 			if teamAscore > teamBscore:
-				self.setWinner(teamA)
+				self._setWinner(teamA)
 			elif teamBscore > teamAscore:
-				self.setWinner(teamB)
+				self._setWinner(teamB)
 			else:
 				pass #If tie, maybe something happens if possible
 		
