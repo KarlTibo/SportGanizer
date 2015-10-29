@@ -20,15 +20,15 @@ class TestTeam:
 		cls.teamAlice._increaseNextMatchIndex()
 		assert cls.teamAlice.nextMatchIndex == 1
 	
-	def test_countWins(cls):
+	def test_countWins_zero(cls):
+		# NOTE : see class TestTeamAndMatch for non-zero case 
 		assert cls.teamAlice.countWins() == 0
-		# TODO : test case with wins
+
+	def test_countLosses_zero(cls):
+		assert cls.teamAlice.countLosses() == 0
 
 	def test_sorted(cls):
-		cls.teamAlice.stats['numberOfWins'] += 1
-		assert cls.teamAlice > cls.teamBob
 		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
-		cls.teamAlice.stats['numberOfWins'] = 0
 		cls.teamBob.stats['numberOfLosses'] += 1
 		assert cls.teamAlice > cls.teamBob
 		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
@@ -73,6 +73,7 @@ class TestMatch:
 		assert cls.teamAlice.matchList[0] == cls.matchAB
 		assert cls.teamBob.matchList[0] == cls.matchAB
 	
+	'''
 	def test_replaceDummyTeam(cls):
 		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2")	
 		cls.matchW1W2.replaceDummyTeam(cls.matchAB.winner, cls.teamAlice)
@@ -91,7 +92,18 @@ class TestMatch:
 		cls.matchW1W2._setWinner(cls.teamCharlie)
 		assert cls.matchAB.winner == cls.teamAlice
 		assert cls.matchW1W2.winner == cls.teamCharlie
-	
+
+	def test_setLoser(cls):
+		cls.matchCD._setLoser(cls.teamCharlie)
+		cls.matchL1L2 = Match(cls.matchAB.loser, cls.matchCD.loser, "Match W1-W2",)
+		assert cls.matchCD.loser == cls.teamCharlie
+		assert cls.matchL1L2.teamB == cls.teamCharlie
+		cls.matchAB._setLoser(cls.teamAlice)
+		cls.matchL1L2._setLoser(cls.teamCharlie)
+		assert cls.matchAB.loser == cls.teamAlice
+		assert cls.matchL1L2.loser == cls.teamCharlie
+	'''
+
 	"""
 	##Test setResult
 	matchW1W2 = Match("Match W1-W2", matchAB.winner, matchCD.winner)
@@ -127,13 +139,21 @@ class TestTeamAndMatch:
 		del cls.matchAB
 		del cls.matchAC
 		del cls.matchAD
-		
+
 	def test_Team_countWins_non_zero(cls):
+		cls.matchAB.winner = cls.teamAlice
+		cls.matchAC.winner = cls.teamAlice
+		cls.matchAD.winner = cls.teamDave
+		assert cls.teamAlice.countWins() == 2
+		assert cls.teamBob.countWins() == 0
+		assert cls.teamDave.countWins() == 1
 
-		assert cls.teamAlice.name == "Alice"
-
-
-	# TODO : def test_Team_countWins():
+	def test_Team_countLosses_non_zero(cls):
+		cls.matchAB.loser = cls.teamBob
+		cls.matchAC.loser = cls.teamAlice
+		cls.matchAD.loser = cls.teamAlice
+		assert cls.teamBob.countLosses() == 1
+		assert cls.teamAlice.countLosses() == 2
 
 	
 class TestPool:

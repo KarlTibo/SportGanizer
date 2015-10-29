@@ -11,8 +11,6 @@ class Team:
 		self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
 
 	def __lt__(self, teamToCompare):
-		selfWins = self.stats['numberOfWins']
-		compWins = teamToCompare.stats['numberOfWins']
 		selfLosses = self.stats['numberOfLosses']
 		compLosses = teamToCompare.stats['numberOfLosses']
 		selfScoreFor = self.stats['scoresFor']
@@ -20,8 +18,8 @@ class Team:
 		selfScoreAgst = self.stats['scoresAgainst']
 		compScoreAgst = teamToCompare.stats['scoresAgainst']
 		
-		SelfHasLessWins = selfWins < compWins
-		EqualWins = selfWins == compWins
+		SelfHasLessWins = self.countWins() < teamToCompare.countWins()
+		EqualWins = self.countWins() == teamToCompare.countWins()
 		SelfHasMoreLosses = selfLosses > compLosses
 		EqualLosses = selfLosses == compLosses
 		SelfHasLessScoresFor = selfScoreFor < compScoreFor
@@ -70,6 +68,14 @@ class Team:
 			else : pass
 		return nOfWins
 
+	def countLosses(self):
+		nOfLosses = 0
+		for match in self.matchList:
+			if match.loser == self :
+				nOfLosses += 1
+			else : pass
+		return nOfLosses
+
 	def rename(self, name):
 		self.name=name
 		
@@ -88,7 +94,8 @@ class Match:
 		self.weight = weight
 		self.winner = Team(str(self.name)+" winner")
 		self.loser = Team(str(self.name)+" loser")
-		
+	
+	'''	
 	def replaceDummyTeam(self, dummyTeam, newTeam):
 		if self.teamA == dummyTeam:
 			self.teamA._removeMatch(self)
@@ -105,16 +112,25 @@ class Match:
 		else:
 			pass # SHOULD WARN
 
+
 	def _setWinner(self, team):
 		if self.winner.matchList == []: #Limit case that might need fixing (end of the tournament?)
 			#team.wasLastMatch()        Needs implementation
 			self.winner = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
-			self.winner.stats['numberOfWins'] += 1
 			#Means the tournament is over!?!? Needs something more.
 		else:
 			#winnerMatch=self.winner.matchList[0] #Shouldn't it be self.winner.matchList[self.nextMatchIndex-1] ?
 			self.winner = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
-			self.winner.stats['numberOfWins'] += 1
+
+	def _setLoser(self, team):
+		if self.winner.matchList == []: #Limit case that might need fixing (end of the tournament?)
+			#team.wasLastMatch()        Needs implementation
+			self.loser = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
+			#Means the tournament is over!?!? Needs something more.
+		else:
+			#winnerMatch=self.winner.matchList[0] #Shouldn't it be self.winner.matchList[self.nextMatchIndex-1] ?
+			self.loser = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
+
 
 	def setResult(self, teamA, teamAscore, teamB, teamBscore):
 		if (teamA != self.teamA and teamA != self.teamB):
@@ -131,7 +147,7 @@ class Match:
 		
 	def teamIsNotInMatch_EXCEPTION(match, team):
 		print team.name+" "+"is not in"+" "+match.name
-		
+	'''
 		
 	#To implement : match result, match location, match time, match versus?, match delete(+ team.removeMatch test)
 	# match winner, match loser
