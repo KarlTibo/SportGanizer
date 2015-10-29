@@ -3,11 +3,11 @@ import pytest
 
 class TestTeam:
 	
-	def setup_class(cls):
+	def setup_method(cls,method):
 		cls.teamAlice = Team("Alice")
 		cls.teamBob = Team("Bob")
 	
-	def teardown_class(cls):
+	def teardown_method(cls,method):
 		del cls.teamAlice
 		del cls.teamBob
 	
@@ -44,7 +44,7 @@ class TestTeam:
 		
 class TestMatch:
 	
-	def setup_class(cls):
+	def setup_method(cls,method):
 		cls.teamAlice = Team("Alice")
 		cls.teamBob = Team("Bob")
 		cls.teamCharlie = Team("Charlie")
@@ -52,7 +52,7 @@ class TestMatch:
 		cls.matchAB = Match(cls.teamAlice, cls.teamBob,"MatchAB")	
 		cls.matchCD = Match(cls.teamCharlie, cls.teamDave,"MatchCD")
 		
-	def teardown_class(cls):
+	def teardown_method(cls,method):
 		del cls.teamAlice
 		del cls.teamBob
 		del cls.teamCharlie
@@ -110,24 +110,28 @@ class TestMatch:
 
 class TestTeamAndMatch:
 
-	def setup_class(cls):
+	def setup_method(cls,method):
 		cls.teamAlice = Team("Alice")
 		cls.teamBob = Team("Bob")
 		cls.teamCharlie = Team("Charlie")
 		cls.teamDave = Team("Dave")
 		cls.matchAB = Match(cls.teamAlice,cls.teamBob)
-		cls.matchAC = Match(cls.teamAlice,cls.teamCharlieharlie)
+		cls.matchAC = Match(cls.teamAlice,cls.teamCharlie)
 		cls.matchAD = Match(cls.teamAlice,cls.teamDave)
-		# TODO : cls.matchAB.setResult()
 
-	def teardown_class(cls):
+	def teardown_method(cls,method):
 		del cls.teamAlice 
 		del cls.teamBob
 		del cls.teamCharlie
 		del cls.teamDave
-		del cls.matchAB 
-		del cls.matchAC 
-		del cls.matchAD 
+		del cls.matchAB
+		del cls.matchAC
+		del cls.matchAD
+		
+	def test_Team_countWins_non_zero(cls):
+
+		assert cls.teamAlice.name == "Alice"
+
 
 	# TODO : def test_Team_countWins():
 
@@ -135,12 +139,12 @@ class TestTeamAndMatch:
 class TestPool:
 	#Tests on class Pool
 	
-	def setup_class(cls):
+	def setup_method(cls,method):
 		cls.poolParty = Pool("Party")
 		cls.teamAlice = Team("Alice")
 		cls.teamBob = Team("Bob") 	
 	
-	def teardown_class(cls):
+	def teardown_method(cls,method):
 		del cls.teamAlice
 		del cls.teamBob
 		del cls.poolParty
@@ -171,11 +175,11 @@ class TestPool:
 
 
 class TestTournament:
-	def setup_class(cls):
+	def setup_method(cls,method):
 		cls.tournamentA = Tournament()
 		cls.poolA = Pool()
 		
-	def teardown_class(cls):
+	def teardown_method(cls,method):
 		del cls.tournamentA
 		del cls.poolA
  	
