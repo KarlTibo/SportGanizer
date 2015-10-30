@@ -31,13 +31,15 @@ class Team:
 		self.matchList=team.matchList
 	'''
 
-	# WARNING : it is a bit intense to just lose track of team after this acts; OK when team is a dummy object, but otherwise???
-	# WARNING : becomes cannot work - a function of team can't reassing one of its arguments (self or team)... damn it!
-	def becomes(self, team):
-		self = team
+	def replacedInMatchsOf(self, team):
+		self.matchList.extend(team.matchList)
+		for match in team.matchList:
+			if match.teamA == team:
+				match.teamA = self
+			elif match.teamB == team:
+				match.teamB = self
+		return self
 	
-
-	# TODO : test this: need EndMatch to work - need becomes to work... major issue
 	def countWins(self):
 		nOfWins = 0
 		for match in self.matchList:
@@ -46,7 +48,6 @@ class Team:
 			else : pass
 		return nOfWins
 
-	# TODO : test this:
 	def countLosses(self):
 		nOfLosses = 0
 		for match in self.matchList:
@@ -55,24 +56,23 @@ class Team:
 			else : pass
 		return nOfLosses
 
-	# TODO : test this:
-	def countScoreFor(self):
+	def countScoresFor(self):
 		nOfScoreFor = 0
 		for match in self.matchList:
 			if match.teamA == self:
 				nOfScoreFor += match.scoreA
 			else :
 				nOfScoreFor += match.scoreB
+		return nOfScoreFor
 
-	# TODO : test this:
-	def countScoreAgainst(self):
+	def countScoresAgainst(self):
 		nOfScoreAgainst = 0
 		for match in self.matchList:
 			if match.teamA == self:
-				nOfScoreFor += match.scoreB
+				nOfScoreAgainst += match.scoreB
 			else :
-				nOfScoreFor += match.scoreA
-
+				nOfScoreAgainst += match.scoreA
+		return nOfScoreAgainst
 
 
 	def __lt__(self, teamToCompare):
@@ -145,17 +145,18 @@ class Match:
 	# NOTE : we could choose to also set score when ending match, just add arguments and call setScore() 
 	def endMatch(self):
 		assert not self.ended
+		print self.scoreA
+
 		if self.scoreA == self.scoreB:
 			self.tie = True
 			print "WARNING : no behaviour decided for a tie"
 			pass # TODO : who wins? who loses?
-		# WARNING : becomes cannot work - a function of team can't reassing one of its arguments (self or team)... damn it!
 		elif self.scoreA > self.scoreB:
-			self.winner = self.teamA #### WRONG!!!
-			self.loser = self.teamB #### WRONG !!!
+			self.winner = self.teamA.replacedInMatchsOf(self.winner)
+			self.loser = self.teamB.replacedInMatchsOf(self.loser)
 		else :
-			self.winner = self.teamB #### WRONG !!!
-			self.loser = self.teamA #### WRONG !!!
+			self.winner = self.teamB.replacedInMatchsOf(self.winner)
+			self.loser = self.teamA.replacedInMatchsOf(self.loser)
 		self.ended = True
 
 	'''	

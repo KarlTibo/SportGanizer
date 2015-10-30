@@ -152,6 +152,10 @@ class TestTeamAndMatch:
 		cls.matchAB = Match(cls.teamAlice,cls.teamBob)
 		cls.matchAC = Match(cls.teamAlice,cls.teamCharlie)
 		cls.matchAD = Match(cls.teamAlice,cls.teamDave)
+		cls.matchCD = Match(cls.teamCharlie,cls.teamDave)
+		cls.matchWABvWCD = Match(cls.matchAB.winner,cls.matchCD.winner)
+		cls.matchWABvLCD = Match(cls.matchAB.winner,cls.matchCD.loser)
+		cls.matchFinal = Match(cls.matchWABvWCD.winner,cls.matchWABvLCD.winner)
 
 	def teardown_method(cls,method):
 		del cls.teamAlice 
@@ -161,22 +165,80 @@ class TestTeamAndMatch:
 		del cls.matchAB
 		del cls.matchAC
 		del cls.matchAD
+		del cls.matchCD
+		del cls.matchWABvWCD
+		del cls.matchWABvLCD
+		del cls.matchFinal
+
+	def test_setup(cls):
+		assert len(cls.teamAlice.matchList) == 3
+		assert len(cls.teamBob.matchList) == 1
+		assert len(cls.teamCharlie.matchList) == 2
+		assert len(cls.teamDave.matchList) == 2
+		assert cls.matchWABvWCD in cls.matchAB.winner.matchList
+		assert cls.matchWABvLCD in cls.matchAB.winner.matchList 
+
+	def test_Team_replacedInMatchsOf(cls):
+		cls.matchAB.winner = cls.teamAlice.replacedInMatchsOf(cls.matchAB.winner)
+		assert cls.matchWABvLCD.teamA == cls.matchAB.winner
+		assert cls.matchAB.winner == cls.teamAlice
+		assert cls.matchAB in cls.teamAlice.matchList
+		assert cls.matchWABvWCD in cls.teamAlice.matchList
+		assert cls.matchWABvLCD in cls.teamAlice.matchList
+		assert cls.matchWABvLCD.teamA == cls.teamAlice
+
+
+	def test_Match_endMatch(cls):
+		cls.matchCD.setScore(cls.teamDave,1)
+		cls.matchCD.endMatch()
+		assert cls.matchCD.winner == cls.teamDave
+		assert cls.matchWABvWCD in cls.teamDave.matchList
+		assert cls.matchWABvLCD in cls.teamCharlie.matchList
+		assert cls.matchCD.ended
+		assert cls.matchWABvWCD.teamB == cls.teamDave
+		assert cls.matchWABvLCD.teamB == cls.teamCharlie
 
 	def test_Team_countWins_non_zero(cls):
-		cls.matchAB.winner = cls.teamAlice
-		cls.matchAC.winner = cls.teamAlice
-		cls.matchAD.winner = cls.teamDave
+		cls.matchAB.setScore(cls.teamAlice,1)
+		cls.matchAC.setScore(cls.teamAlice,1)
+		cls.matchAD.setScore(cls.teamDave,1)
+		cls.matchAB.endMatch()
+		cls.matchAC.endMatch()
+		cls.matchAD.endMatch()
 		assert cls.teamAlice.countWins() == 2
 		assert cls.teamBob.countWins() == 0
+		assert cls.teamCharlie.countWins() == 0 
 		assert cls.teamDave.countWins() == 1
+	
 
 	def test_Team_countLosses_non_zero(cls):
-		cls.matchAB.loser = cls.teamBob
-		cls.matchAC.loser = cls.teamAlice
-		cls.matchAD.loser = cls.teamAlice
+		cls.matchAB.setScore(cls.teamAlice,1)
+		cls.matchAC.setScore(cls.teamAlice,1)
+		cls.matchAD.setScore(cls.teamDave,1)
+		cls.matchCD.setScore(cls.teamDave,1)
+		cls.matchAB.endMatch()
+		cls.matchAC.endMatch()
+		cls.matchAD.endMatch()
+		cls.matchCD.endMatch()
+		assert cls.teamAlice.countLosses() == 1
 		assert cls.teamBob.countLosses() == 1
-		assert cls.teamAlice.countLosses() == 2
+		assert cls.teamCharlie.countLosses() == 2 
+		assert cls.teamDave.countLosses() == 0
 
+	def test_Team_countScores(cls):
+		cls.matchAB.setScore(cls.teamAlice,2,cls.teamBob,1)
+		cls.matchAC.setScore(cls.teamAlice,3)
+		cls.matchAD.setScore(cls.teamDave,6)
+		cls.matchCD.setScore(cls.teamDave,7)
+		cls.matchAB.endMatch()
+		cls.matchAC.endMatch()
+		cls.matchAD.endMatch()
+		cls.matchCD.endMatch()
+		assert cls.teamAlice.countScoresFor() == 5
+		assert cls.teamAlice.countScoresAgainst() == 7
+		assert cls.teamBob.countScoresAgainst() == 2
+		assert cls.teamCharlie.countScoresAgainst() == 10 
+		assert cls.teamDave.countScoresFor() == 13
 	
 class TestPool:
 	#Tests on class Pool
