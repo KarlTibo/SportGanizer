@@ -6,9 +6,7 @@ class Team:
 		self.name = name 
 		self.matchList = []
 		#self.nextMatchIndex = 0
-		#self.stats = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Stats inside each pool the team participates in, resetted after each pool ends.
-		#self.statsTotal = {'numberOfWins': 0, 'numberOfLosses': 0, 'numberOfTies': 0, 'scoresFor': 0, 'scoresAgainst': 0} #Total stats over every pool, updated after each pool ends.
-
+	
 	def rename(self, name):
 		self.name=name
 
@@ -18,19 +16,10 @@ class Team:
 	def _removeMatch(self, match):
 		self.matchList.remove(match)
 	
-	# NOTE : This guy could be a function that takes advantage of Match.ended
-	def _increaseNextMatchIndex(self):
-		self.nextMatchIndex = self.nextMatchIndex + 1
+	# NOTE : This could be a counting function that takes advantage of Match.ended
+	#def _increaseNextMatchIndex(self):
+	#	self.nextMatchIndex = self.nextMatchIndex + 1
 	
-	# NOTE : untested anyway, probably useless... (think about crossover)
-	'''
-	def _swap(self, team):
-		tempMatchList=self.matchList
-		tempName=self.name
-		tempNextMatchIndex=self.nextMatchIndex
-		self.matchList=team.matchList
-	'''
-
 	def replacedInMatchsOf(self, team):
 		self.matchList.extend(team.matchList)
 		for match in team.matchList:
@@ -74,19 +63,14 @@ class Team:
 				nOfScoreAgainst += match.scoreA
 		return nOfScoreAgainst
 
-
 	def __lt__(self, teamToCompare):
-
 		SelfHasLessWins = self.countWins() < teamToCompare.countWins()
 		EqualWins = self.countWins() == teamToCompare.countWins()
 		SelfHasMoreLosses = self.countLosses() > teamToCompare.countLosses()
 		EqualLosses = self.countLosses() == teamToCompare.countLosses()
-		
-		# TODO : before to create functions countScoresFor() and countScoresAgainst() we need to manage score in class Match
-		SelfHasLessScoresFor = False
-		EqualScoresFor = False
-		SelfHasMoreScoresAgainst = True
-		
+		SelfHasLessScoresFor = self.countScoresFor() < teamToCompare.countScoresFor()
+		EqualScoresFor = self.countScoresFor() == teamToCompare.countScoresFor()
+		SelfHasMoreScoresAgainst = self.countScoresAgainst() > teamToCompare.countScoresAgainst()
 		if SelfHasLessWins:
 			return True
 		elif EqualWins and SelfHasMoreLosses:
@@ -99,12 +83,7 @@ class Team:
 		else:
 			return False
 
-
-		
-	#To implement : team stats, team delete?, __lt__ conditionned on if self has beaten other team in the pool,
-	#Functions :  swap(using deepcopy)
-	#_becomes : needs to erase future matches (crossovers)
-
+	#To implement : team delete?, __lt__ conditionned on selected pool,
 
 class Match:
 	def __init__(self, teamA, teamB, name = None, weight = 0):

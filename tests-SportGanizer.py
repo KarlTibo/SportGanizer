@@ -29,22 +29,7 @@ class TestTeam:
 	def test_countLosses_zero(cls):
 		assert cls.teamAlice.countLosses() == 0
 
-	'''
-	def test_sorted(cls):
-		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
-		cls.teamBob.stats['numberOfLosses'] += 1
-		assert cls.teamAlice > cls.teamBob
-		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
-		cls.teamBob.stats['numberOfLosses'] = 0
-		cls.teamAlice.stats['scoresFor'] += 1
-		assert cls.teamBob < cls.teamAlice
-		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamAlice
-		cls.teamAlice.stats['scoresFor'] = 0
-		cls.teamAlice.stats['scoresAgainst'] += 1
-		assert cls.teamAlice < cls.teamBob
-		assert sorted([cls.teamAlice,cls.teamBob], reverse = True)[0] == cls.teamBob
-	'''		
-		
+	
 class TestMatch:
 	
 	def setup_method(cls,method):
@@ -126,21 +111,6 @@ class TestMatch:
 		assert cls.matchL1L2.loser == cls.teamCharlie
 	'''
 
-	"""
-	##Test setResult
-	matchW1W2 = Match("Match W1-W2", matchAB.winner, matchCD.winner)
-	#matchCD.setResult(teamCharlie)
-	
-	#Tests on class Team and Match
-	teamAlice = Team("Alice")
-	teamBob = Team("Bob")
-	matchAB = Match("MatchAB", teamAlice, teamBob)
-	teamAlice._becomes(teamBob)
-	assert len(teamAlice.matchList) == 2
-	assert teamAlice.matchList[1] == matchAB
-	assert teamAlice.nextMatchIndex == 1
-	"""
-
 
 class TestTeamAndMatch:
 
@@ -186,7 +156,6 @@ class TestTeamAndMatch:
 		assert cls.matchWABvWCD in cls.teamAlice.matchList
 		assert cls.matchWABvLCD in cls.teamAlice.matchList
 		assert cls.matchWABvLCD.teamA == cls.teamAlice
-
 
 	def test_Match_endMatch(cls):
 		cls.matchCD.setScore(cls.teamDave,1)
@@ -239,6 +208,22 @@ class TestTeamAndMatch:
 		assert cls.teamBob.countScoresAgainst() == 2
 		assert cls.teamCharlie.countScoresAgainst() == 10 
 		assert cls.teamDave.countScoresFor() == 13
+
+	def test_sorting_teams(cls):
+		cls.matchAB.setScore(cls.teamAlice,2,cls.teamBob,1)
+		cls.matchAB.endMatch()
+		cls.matchAC.setScore(cls.teamAlice,6,cls.teamCharlie,4)
+		cls.matchAC.endMatch()
+		cls.matchAD.setScore(cls.teamAlice,4,cls.teamDave,9)
+		cls.matchAD.endMatch()
+		cls.matchCD.setScore(cls.teamCharlie,5,cls.teamDave,2)
+		cls.matchCD.endMatch()
+		# A : 2-1-12-14 , C : 1-2-9-8 , D : 1-1-11-9
+		assert cls.teamAlice > cls.teamCharlie
+		assert cls.teamCharlie < cls.teamAlice
+		assert cls.teamCharlie < cls.teamDave
+		assert sorted([cls.teamAlice,cls.teamBob,cls.teamCharlie,cls.teamDave], reverse = True) == [cls.teamAlice,cls.teamDave,cls.teamCharlie,cls.teamBob]
+	
 	
 class TestPool:
 	#Tests on class Pool
