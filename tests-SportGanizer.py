@@ -15,15 +15,8 @@ class TestTeam:
 		assert cls.teamAlice.name != "defaultTeam"
 		assert cls.teamAlice.name == "Alice"
 		assert cls.teamAlice.matchList == []
-	
-	'''
-	def test_increaseNextMatchIndex(cls):
-		cls.teamAlice._increaseNextMatchIndex()
-		assert cls.teamAlice.nextMatchIndex == 1
-	'''
 
 	def test_countWins_zero(cls):
-		# NOTE : see class TestTeamAndMatch for non-zero case 
 		assert cls.teamAlice.countWins() == 0
 
 	def test_countLosses_zero(cls):
@@ -79,37 +72,6 @@ class TestMatch:
 		assert cls.matchAB.ended
 		assert cls.matchAB.winner == cls.teamAlice
 		assert cls.matchAB.loser == cls.teamBob
-
-	'''
-	def test_replaceDummyTeam(cls):
-		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2")	
-		cls.matchW1W2.replaceDummyTeam(cls.matchAB.winner, cls.teamAlice)
-		assert cls.matchW1W2.teamA == cls.teamAlice
-		assert cls.teamAlice.matchList[1] == cls.matchW1W2
-		cls.matchW1W2.replaceDummyTeam(cls.matchCD.winner, cls.teamCharlie)
-		assert cls.matchW1W2.teamB == cls.teamCharlie
-		assert cls.matchW1W2.teamB.nextMatchIndex == 1
-	
-	def test_setWinner(cls):
-		cls.matchCD._setWinner(cls.teamCharlie)
-		cls.matchW1W2 = Match(cls.matchAB.winner, cls.matchCD.winner, "Match W1-W2",)
-		assert cls.matchCD.winner == cls.teamCharlie
-		assert cls.matchW1W2.teamB == cls.teamCharlie
-		cls.matchAB._setWinner(cls.teamAlice)
-		cls.matchW1W2._setWinner(cls.teamCharlie)
-		assert cls.matchAB.winner == cls.teamAlice
-		assert cls.matchW1W2.winner == cls.teamCharlie
-
-	def test_setLoser(cls):
-		cls.matchCD._setLoser(cls.teamCharlie)
-		cls.matchL1L2 = Match(cls.matchAB.loser, cls.matchCD.loser, "Match W1-W2",)
-		assert cls.matchCD.loser == cls.teamCharlie
-		assert cls.matchL1L2.teamB == cls.teamCharlie
-		cls.matchAB._setLoser(cls.teamAlice)
-		cls.matchL1L2._setLoser(cls.teamCharlie)
-		assert cls.matchAB.loser == cls.teamAlice
-		assert cls.matchL1L2.loser == cls.teamCharlie
-	'''
 
 
 class TestTeamAndMatch:

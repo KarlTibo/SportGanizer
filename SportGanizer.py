@@ -5,7 +5,6 @@ class Team:
 	def __init__(self, name = None):
 		self.name = name 
 		self.matchList = []
-		#self.nextMatchIndex = 0
 	
 	def rename(self, name):
 		self.name=name
@@ -15,10 +14,6 @@ class Team:
 	
 	def _removeMatch(self, match):
 		self.matchList.remove(match)
-	
-	# NOTE : This could be a counting function that takes advantage of Match.ended
-	#def _increaseNextMatchIndex(self):
-	#	self.nextMatchIndex = self.nextMatchIndex + 1
 	
 	def replacedInMatchsOf(self, team):
 		self.matchList.extend(team.matchList)
@@ -102,24 +97,20 @@ class Match:
 		self.winner = Team()
 		self.loser = Team()
 
-
 	def setScore(self, team, score, secondTeam = None, secondScore = None):
 		assert not self.ended
 		if team == self.teamA:
 			self.scoreA = score
 		elif team == self.teamB:
 			self.scoreB = score
-		else:
+		else: # TODO : decide what happens then...
 			print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
-			# TODO : decide what happens then...
 		if secondTeam == None and secondScore == None:
 			pass
 		elif secondTeam != None and secondScore != None and secondTeam != team:
 			self.setScore(secondTeam,secondScore)
-		else:
+		else: # TODO : handle exceptions
 			print "\tWARNING : something is wrong with second team input"
-			# TODO : handle exceptions
-
 
 	# NOTE : we could choose to also set score when ending match, just add arguments and call setScore() 
 	def endMatch(self):
@@ -137,71 +128,15 @@ class Match:
 			self.winner = self.teamB.replacedInMatchsOf(self.winner)
 			self.loser = self.teamA.replacedInMatchsOf(self.loser)
 		self.ended = True
+	
 
-	'''	
-	def replaceDummyTeam(self, dummyTeam, newTeam):
-		if self.teamA == dummyTeam:
-			self.teamA._removeMatch(self)
-			self.teamA = newTeam
-			self.teamA._addMatch(self)
-			self.teamA._increaseNextMatchIndex()
-			del dummyTeam
-		elif self.teamB == dummyTeam:
-			self.teamB._removeMatch(self)
-			self.teamB = newTeam
-			self.teamB._addMatch(self)
-			self.teamB._increaseNextMatchIndex()
-			del dummyTeam
-		else:
-			pass # SHOULD WARN
-
-
-	def _setWinner(self, team):
-		if self.winner.matchList == []: #Limit case that might need fixing (end of the tournament?)
-			#team.wasLastMatch()        Needs implementation
-			self.winner = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
-			#Means the tournament is over!?!? Needs something more.
-		else:
-			#winnerMatch=self.winner.matchList[0] #Shouldn't it be self.winner.matchList[self.nextMatchIndex-1] ?
-			self.winner = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
-
-	def _setLoser(self, team):
-		if self.winner.matchList == []: #Limit case that might need fixing (end of the tournament?)
-			#team.wasLastMatch()        Needs implementation
-			self.loser = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
-			#Means the tournament is over!?!? Needs something more.
-		else:
-			#winnerMatch=self.winner.matchList[0] #Shouldn't it be self.winner.matchList[self.nextMatchIndex-1] ?
-			self.loser = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ? NOOOOOOOOO! We will need to replaceDummyTeam in the other match that the winner will play by the self.winner.
-
-
-	def setResult(self, teamA, teamAscore, teamB, teamBscore):
-		if (teamA != self.teamA and teamA != self.teamB):
-			teamIsNotInMatch_EXCEPTION(self, teamA)
-		elif (teamB != self.teamA and teamB != self.teamB):
-			teamIsNotInMatch_EXCEPTION(self, teamB)
-		else:
-			if teamAscore > teamBscore:
-				self._setWinner(teamA)
-			elif teamBscore > teamAscore:
-				self._setWinner(teamB)
-			else:
-				pass #If tie, maybe something happens if possible
-		
-	def teamIsNotInMatch_EXCEPTION(match, team):
-		print team.name+" "+"is not in"+" "+match.name
-	'''
-		
-	#To implement : match result, match location, match time, match versus?, match delete(+ team.removeMatch test)
-	# match winner, match loser
-	#if match already exists, copy itself to the existing match
-	#coding = and == operators of matches
-	#Functions : match.setResult(tests) and losers!!
-	# match.setVersus?
+	# To implement : match location, match time, match versus?, match delete(+ team.removeMatch test)
+	# if match already exists, copy itself to the existing match?
 
 
 
-## Should correct the name for Pool also
+
+
 
 class Pool:
 	def __init__(self, initName = "defaultPool", initTeamList = []):
