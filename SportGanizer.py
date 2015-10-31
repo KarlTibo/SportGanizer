@@ -6,13 +6,13 @@ class Team:
 		self.name = name 
 		self.matchList = []
 	
+	def isDummy(self):
+		return ((self.name == None) and (self.matchList == []))
 	def rename(self, name):
-		self.name=name
-
-	def _addMatch(self, match):
+		self.name = name
+	def addMatch(self, match):
 		self.matchList.append(match)
-	
-	def _removeMatch(self, match):
+	def removeMatch(self, match):
 		self.matchList.remove(match)
 	
 	def replacedInMatchsOf(self, team):
@@ -27,19 +27,15 @@ class Team:
 	def countWins(self):
 		nOfWins = 0
 		for match in self.matchList:
-			if match.winner == self :
+			if match.winner == self: 
 				nOfWins += 1
-			else : pass
 		return nOfWins
-
 	def countLosses(self):
 		nOfLosses = 0
 		for match in self.matchList:
-			if match.loser == self :
+			if match.loser == self: 
 				nOfLosses += 1
-			else : pass
 		return nOfLosses
-
 	def countScoresFor(self):
 		nOfScoreFor = 0
 		for match in self.matchList:
@@ -48,7 +44,6 @@ class Team:
 			else :
 				nOfScoreFor += match.scoreB
 		return nOfScoreFor
-
 	def countScoresAgainst(self):
 		nOfScoreAgainst = 0
 		for match in self.matchList:
@@ -58,37 +53,25 @@ class Team:
 				nOfScoreAgainst += match.scoreA
 		return nOfScoreAgainst
 
-	def __lt__(self, teamToCompare):
-		SelfHasLessWins = self.countWins() < teamToCompare.countWins()
-		EqualWins = self.countWins() == teamToCompare.countWins()
-		SelfHasMoreLosses = self.countLosses() > teamToCompare.countLosses()
-		EqualLosses = self.countLosses() == teamToCompare.countLosses()
-		SelfHasLessScoresFor = self.countScoresFor() < teamToCompare.countScoresFor()
-		EqualScoresFor = self.countScoresFor() == teamToCompare.countScoresFor()
-		SelfHasMoreScoresAgainst = self.countScoresAgainst() > teamToCompare.countScoresAgainst()
-		if SelfHasLessWins:
-			return True
-		elif EqualWins and SelfHasMoreLosses:
-			return True
-		elif EqualWins and EqualLosses:
-			if SelfHasLessScoresFor:
-				return True
-			elif EqualScoresFor and SelfHasMoreScoresAgainst:
-				return True
-		else:
-			return False
+	def __lt__(self, team):
+		if self.countWins() == team.countWins():
+			if self.countLosses() == team.countLosses():
+				if self.countScoresFor() == team.countScoresFor():
+					return self.countScoresAgainst() > self.countScoresAgainst() 
+				else: return self.countScoresFor() < team.countScoresFor()
+			else : return self.countLosses() > team.countLosses()
+		else: return self.countWins() < team.countWins()
 
 	#To implement : team delete?, __lt__ conditionned on selected pool,
 
 class Match:
-	def __init__(self, teamA, teamB, name = None, weight = 0):
+	def __init__(self, teamA, teamB, name = None):
 		self.name = name
-		self.weight = weight
 
 		self.teamA = teamA
-		self.teamA._addMatch(self)
+		self.teamA.addMatch(self)
 		self.teamB = teamB
-		self.teamB._addMatch(self)
+		self.teamB.addMatch(self)
 
 		self.ended = False
 		self.tie = False
@@ -97,34 +80,55 @@ class Match:
 		self.winner = Team()
 		self.loser = Team()
 
+	### WHY GOD WHY???
+	'''
+	def select(self,team):
+		if self.teamA == team:
+			return self.teamA
+		elif self.teamB == team:
+			return self.teamB
+		else: print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
+
+	def scoreOf(self,team):
+		if self.teamA == team:
+			return self.scoreA
+		elif self.teamB == team:
+			return self.scoreB
+		else: print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
+
 	def setScore(self, team, score, secondTeam = None, secondScore = None):
 		assert not self.ended
-		if team == self.teamA:
-			self.scoreA = score
-		elif team == self.teamB:
-			self.scoreB = score
-		else: # TODO : decide what happens then...
-			print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
 		if secondTeam == None and secondScore == None:
-			pass
-		elif secondTeam != None and secondScore != None and secondTeam != team:
+			self.scoreOf(team) = score
+		else:
+			self.setScore(team,score)
 			self.setScore(secondTeam,secondScore)
-		else: # TODO : handle exceptions
-			print "\tWARNING : something is wrong with second team input"
+	'''
+	### It would be so beautiful !!
+
+	def setScore(self, team, score, secondTeam = None, secondScore = None):
+		assert not self.ended
+		if secondTeam == None and secondScore == None:
+			if team == self.teamA:
+				self.scoreA = score
+			elif team == self.teamB:
+				self.scoreB = score
+			else: # TODO : decide what happens then...
+				print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
+		else:
+			self.setScore(team,score)
+			self.setScore(secondTeam,secondScore)
 
 	# NOTE : we could choose to also set score when ending match, just add arguments and call setScore() 
 	def endMatch(self):
 		assert not self.ended
-		print self.scoreA
-
 		if self.scoreA == self.scoreB:
 			self.tie = True
-			print "WARNING : no behaviour decided for a tie"
-			pass # TODO : who wins? who loses?
+			print "WARNING : no behaviour decided for a tie" # TODO : who wins? who loses?
 		elif self.scoreA > self.scoreB:
 			self.winner = self.teamA.replacedInMatchsOf(self.winner)
 			self.loser = self.teamB.replacedInMatchsOf(self.loser)
-		else :
+		elif self.scoreA < self.scoreB:
 			self.winner = self.teamB.replacedInMatchsOf(self.winner)
 			self.loser = self.teamA.replacedInMatchsOf(self.loser)
 		self.ended = True
