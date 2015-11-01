@@ -6,7 +6,7 @@ class Team:
 		self.name = name 
 		self.matchList = []
 	
-	def isDummy(self):
+	def isUnnamedAndHasNoMatch(self):
 		return ((self.name == None) and (self.matchList == []))
 	def rename(self, name):
 		self.name = name
@@ -15,13 +15,14 @@ class Team:
 	def removeMatch(self, match):
 		self.matchList.remove(match)
 	
-	def replacedInMatchsOf(self, team):
-		self.matchList.extend(team.matchList)
+	def takingPlaceOf(self, team):
 		for match in team.matchList:
 			if match.teamA == team:
 				match.teamA = self
 			elif match.teamB == team:
 				match.teamB = self
+			self.addMatch(match)
+		team.matchList = []
 		return self
 	
 	def countWins(self):
@@ -126,11 +127,11 @@ class Match:
 			self.tie = True
 			print "WARNING : no behaviour decided for a tie" # TODO : who wins? who loses?
 		elif self.scoreA > self.scoreB:
-			self.winner = self.teamA.replacedInMatchsOf(self.winner)
-			self.loser = self.teamB.replacedInMatchsOf(self.loser)
+			self.winner = self.teamA.takingPlaceOf(self.winner)
+			self.loser = self.teamB.takingPlaceOf(self.loser)
 		elif self.scoreA < self.scoreB:
-			self.winner = self.teamB.replacedInMatchsOf(self.winner)
-			self.loser = self.teamA.replacedInMatchsOf(self.loser)
+			self.winner = self.teamB.takingPlaceOf(self.winner)
+			self.loser = self.teamA.takingPlaceOf(self.loser)
 		self.ended = True
 	
 

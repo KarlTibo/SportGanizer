@@ -2,7 +2,7 @@ from SportGanizer import *
 import pytest
 
 #
-# TESTS on CLASS TEAM (without teams)
+# TESTS on CLASS TEAM INITIALIZATION (without matchs)
 
 class TestUnnamedTeamInitialization:
 	def setup_method(self,method):
@@ -15,7 +15,7 @@ class TestUnnamedTeamInitialization:
 	def test_has_no_matchs(self):
 		assert self.team.matchList == []
 	def test_is_dummy(self):
-		assert self.team.isDummy()
+		assert self.team.isUnnamedAndHasNoMatch()
 
 	def test_all_dummy_teams_are_not_the_same(self):
 		otherTeam = Team()
@@ -50,7 +50,7 @@ class TestNamedTeamInitialization:
 	def test_has_no_matchs(self):
 		assert self.team.matchList == []
 	def test_is_not_dummy(self):
-		assert not self.team.isDummy()
+		assert not self.team.isUnnamedAndHasNoMatch()
 
 	def test_same_name_teams_are_not_the_same(self):
 		otherTeam = Team('teamName')
@@ -74,7 +74,7 @@ class TestNamedTeamInitialization:
 
 
 #
-# TESTS on CLASS MATCH (with basic empty teams)
+# TESTS for CLASS MATCH INITIALIZATION (with basic empty teams)
 
 class TestUnnamedMatchWithBasicTeamsInitialization:
 	def setup_method(self,method):
@@ -92,9 +92,9 @@ class TestUnnamedMatchWithBasicTeamsInitialization:
 		assert self.match.scoreA == 0
 		assert self.match.scoreB == 0
 	def test_winner_is_dummy(self):
-		assert self.match.winner.isDummy()
+		assert self.match.winner.isUnnamedAndHasNoMatch()
 	def test_loser_is_dummy(self):
-		assert self.match.winner.isDummy()
+		assert self.match.winner.isUnnamedAndHasNoMatch()
 
 	def test_match_is_in_teamA_matchList(self):
 		assert self.match in self.match.teamA.matchList
@@ -123,9 +123,9 @@ class TestNamedMatchWithDifferentiableTeamsInitialization:
 		assert self.match.scoreA == 0
 		assert self.match.scoreB == 0
 	def test_winner_is_dummy(self):
-		assert self.match.winner.isDummy()
+		assert self.match.winner.isUnnamedAndHasNoMatch()
 	def test_loser_is_dummy(self):
-		assert self.match.winner.isDummy()
+		assert self.match.winner.isUnnamedAndHasNoMatch()
 
 	def test_match_is_in_teamA_matchList(self):
 		assert self.match in self.match.teamA.matchList
@@ -142,51 +142,45 @@ class TestNamedMatchWithDifferentiableTeamsInitialization:
 
 
 #
-# MISSING
-# TESTS on CLASS TEAM FUNCTIONS (including forged matchs)
-#	here we must test replacedInMatchsOf toroughly
+# TESTS on CLASS TEAM (with basic matchs)
 
-class Test_teams_capacity_to_introspect_matchList:
+class Test_team_takingPlaceOf:
 	def setup_method(self,method):
 		self.teamAlice = Team('Alice')
 		self.teamBob = Team('Bob')
-		self.matchAB1 = Match(self.teamAlice,self.teamBob,'matchAB1')
-		self.matchAB2 = Match(self.teamAlice,self.teamBob,'matchAB2')
-		self.matchAB3 = Match(self.teamAlice,self.teamBob,'matchAB3')
-		'''
-		self.matchAB1.ended = True
-		self.matchAB1.tie = False
-		self.matchAB1.scoreA =
-		self.matchAB1.scoreB =
-		self.matchAB1.winner =
-		self.matchAB1.loser =
-
-		self.matchAB1.ended = True
-		self.matchAB1.tie = 
-		self.matchAB1.scoreA =
-		self.matchAB1.scoreB =
-		self.matchAB1.winner =
-		self.matchAB1.loser =
-
-		self.matchAB1.ended = False
-		self.matchAB1.tie = 
-		self.matchAB1.scoreA =
-		self.matchAB1.scoreB =
-		self.matchAB1.winner =
-		self.matchAB1.loser =
-		'''
+		self.teamCharlie = Team('Charlie')
+		self.matchAB = Match(self.teamAlice,self.teamBob,'matchAB')
+		self.matchBC = Match(self.teamBob,self.teamCharlie,'matchBC')
+		self.matchCB = Match(self.teamCharlie,self.teamBob,'matchCB')
+		self.newTeamAlice = self.teamAlice.takingPlaceOf(self.teamCharlie)
 
 	def teardown_method(self,method):
 		del self.teamAlice
 		del self.teamBob
-		del self.matchAB1
-		del self.matchAB2
-		del self.matchAB3
+		del self.matchAB
+		del self.matchBC
+		del self.matchCB
+		del self.newTeamAlice
 
-	#...
+	def test_newTeamAlice_is_teamAlice(self):
+		assert self.newTeamAlice == self.teamAlice
+	def test_teamCharlie_matchList_was_emptied(self):
+		assert self.teamCharlie.matchList == []
+	def test_teamAlice_still_has_its_first_match(self):
+		assert self.matchAB in self.teamAlice.matchList
+		assert self.matchAB.teamA == self.teamAlice
+	def test_matchAB_is_first_in_teamAlice_matchList(self):
+		assert self.teamAlice.matchList[0] == self.matchAB
+	def test_teamAlice_matchList_contains_teamCharlie_old_matchs(self):
+		assert self.matchBC in self.teamAlice.matchList
+		assert self.matchCB in self.teamAlice.matchList
+	def test_teamAlice_is_in_teamCharlie_old_matchs(self):
+		assert self.matchBC.teamB == self.teamAlice
+		assert self.matchCB.teamA == self.teamAlice
+
 
 #
-# TESTS on CLASS MATCH FUNCTIONS (with recognizable teams)
+# TESTS on CLASS MATCH (with recognizable teams)
 
 class Test_match_setScore_TWO_args:
 	def setup_method(self,method):
@@ -207,19 +201,12 @@ class Test_match_setScore_TWO_args:
 		assert self.matchAB.scoreA == 5
 	def test_scoreB(self):
 		assert self.matchAB.scoreA == 5
-
-	# Should be in tests on teams with forged matchs #
 	def test_effect_on_teamA(self):
-		assert self.matchAB.teamA.countScoresFor() == 5
 		assert self.teamAlice.countScoresFor() == 5
-		assert self.matchAB.teamA.countScoresAgainst() == 0
 		assert self.teamAlice.countScoresAgainst() == 0
 	def test_effect_on_teamB(self):
-		assert self.matchAB.teamB.countScoresFor() == 0
 		assert self.teamBob.countScoresFor() == 0
-		assert self.matchAB.teamB.countScoresAgainst() == 5
 		assert self.teamBob.countScoresAgainst() == 5
-	##################################################
 
 
 class Test_match_setScore_FOUR_args:
@@ -241,19 +228,12 @@ class Test_match_setScore_FOUR_args:
 		assert self.matchAB.scoreA == 5
 	def test_scoreB(self):
 		assert self.matchAB.scoreB == 3
-
-	# Should be in tests on teams with forged matchs #
 	def test_effect_on_teamA(self):
-		assert self.matchAB.teamA.countScoresFor() == 5
 		assert self.teamAlice.countScoresFor() == 5
-		assert self.matchAB.teamA.countScoresAgainst() == 3
 		assert self.teamAlice.countScoresAgainst() == 3
 	def test_effect_on_teamB(self):
-		assert self.matchAB.teamB.countScoresFor() == 3
 		assert self.teamBob.countScoresFor() == 3
-		assert self.matchAB.teamB.countScoresAgainst() == 5
 		assert self.teamBob.countScoresAgainst() == 5
-	##################################################
 
 
 class Test_match_setScore_then_endMatch_with_A_gt_B:
@@ -281,9 +261,9 @@ class Test_match_setScore_then_endMatch_with_A_gt_B:
 	def test_loser_was_defined_for_AgtB(self):
 		self.matchAB2.loser == self.teamAlice
 
-#
-# TESTS - BASIC MATCH TREE
 
+#
+# TESTS - TEAMS with BASIC MATCH TREE
 
 
 
@@ -359,8 +339,8 @@ class TestTeamAndMatch:
 		assert self.matchWABvWCD in self.matchAB.winner.matchList
 		assert self.matchWABvLCD in self.matchAB.winner.matchList 
 
-	def test_Team_replacedInMatchsOf(self):
-		self.matchAB.winner = self.teamAlice.replacedInMatchsOf(self.matchAB.winner)
+	def test_Team_takingPlaceOf(self):
+		self.matchAB.winner = self.teamAlice.takingPlaceOf(self.matchAB.winner)
 		assert self.matchWABvLCD.teamA == self.matchAB.winner
 		assert self.matchAB.winner == self.teamAlice
 		assert self.matchAB in self.teamAlice.matchList
