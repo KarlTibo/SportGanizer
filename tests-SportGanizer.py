@@ -414,7 +414,10 @@ class TestTeamAndMatch:
 		assert self.teamCharlie < self.teamAlice
 		assert self.teamCharlie < self.teamDave
 		assert sorted([self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave], reverse = True) == [self.teamAlice,self.teamDave,self.teamCharlie,self.teamBob]
-	
+
+
+#
+# TEST on CLASS POOL
 	
 class TestPool:
 	#Tests on class Pool

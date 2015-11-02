@@ -15,6 +15,7 @@ class Team:
 	def removeMatch(self, match):
 		self.matchList.remove(match)
 	
+	# TODO : code a replace team in class Match
 	def takingPlaceOf(self, team):
 		for match in team.matchList:
 			if match.teamA == team:
@@ -25,6 +26,7 @@ class Team:
 		team.matchList = []
 		return self
 	
+	# TODO : code a getWinner and getLoser and a setWinner and setLoser
 	def countWins(self):
 		nOfWins = 0
 		for match in self.matchList:
@@ -40,10 +42,7 @@ class Team:
 	def countScoresFor(self):
 		nOfScoreFor = 0
 		for match in self.matchList:
-			if match.teamA == self:
-				nOfScoreFor += match.scoreA
-			else :
-				nOfScoreFor += match.scoreB
+			nOfScoreFor += match.getScore(self)
 		return nOfScoreFor
 	def countScoresAgainst(self):
 		nOfScoreAgainst = 0
@@ -63,7 +62,7 @@ class Team:
 			else : return self.countLosses() > team.countLosses()
 		else: return self.countWins() < team.countWins()
 
-	#To implement : team delete?, __lt__ conditionned on selected pool,
+	#To implement : team delete with incidence on matchs, __lt__ conditionned on selected pool,
 
 class Match:
 	def __init__(self, teamA, teamB, name = None):
@@ -107,6 +106,15 @@ class Match:
 	'''
 	### It would be so beautiful !!
 
+	# TODO : write the tests of getScore()
+	def getScore(self, team):
+		if team == self.teamA:
+			return self.scoreA
+		elif team == self.teamB:
+			return self.scoreB
+		else: # TODO : decide what happens then...
+			print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
+
 	def setScore(self, team, score, secondTeam = None, secondScore = None):
 		assert not self.ended
 		if secondTeam == None and secondScore == None:
@@ -133,7 +141,6 @@ class Match:
 			self.winner = self.teamB.takingPlaceOf(self.winner)
 			self.loser = self.teamA.takingPlaceOf(self.loser)
 		self.ended = True
-	
 
 	# To implement : match location, match time, match versus?, match delete(+ team.removeMatch test)
 	# if match already exists, copy itself to the existing match?
