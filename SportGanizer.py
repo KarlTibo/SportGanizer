@@ -76,13 +76,13 @@ class Match:
 	# here [
 	def getWinner(self):
 		return self.winner
-	# Problem using set winner inside class match. try in endMatch()
-	def setWinner(self, team):
-		self.winner = team.takingPlaceOf(self.winner)
 	def getLoser(self):
 		return self.loser
-	def setLoser(self, team):
-		self.winner = team.takingPlaceOf(self.winner)
+	# Problem using set winner inside class match. see in endMatch() only usage now so...
+	#def setWinner(self, team):
+	#	self.winner = team.takingPlaceOf(self.winner)
+	#def setLoser(self, team):
+	#	self.winner = team.takingPlaceOf(self.winner)
 	def replace(self, firstTeam, secondTeam):
 		if self.teamA == firstTeam: 
 			self.teamA = secondTeam
