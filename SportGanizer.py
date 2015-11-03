@@ -14,29 +14,24 @@ class Team:
 		self.matchList.append(match)
 	def removeMatch(self, match):
 		self.matchList.remove(match)
-	
-	# TODO : code a replace team in class Match
+
 	def takingPlaceOf(self, team):
 		for match in team.matchList:
-			if match.teamA == team:
-				match.teamA = self
-			elif match.teamB == team:
-				match.teamB = self
+			match.replace(self,team)
 			self.addMatch(match)
 		team.matchList = []
 		return self
-	
-	# TODO : code a getWinner and getLoser and a setWinner and setLoser
+
 	def countWins(self):
 		nOfWins = 0
 		for match in self.matchList:
-			if match.winner == self: 
+			if match.getWinner() == self: 
 				nOfWins += 1
 		return nOfWins
 	def countLosses(self):
 		nOfLosses = 0
 		for match in self.matchList:
-			if match.loser == self: 
+			if match.getLoser() == self: 
 				nOfLosses += 1
 		return nOfLosses
 	def countScoresFor(self):
@@ -47,10 +42,7 @@ class Team:
 	def countScoresAgainst(self):
 		nOfScoreAgainst = 0
 		for match in self.matchList:
-			if match.teamA == self:
-				nOfScoreAgainst += match.scoreB
-			else :
-				nOfScoreAgainst += match.scoreA
+			nOfScoreAgainst += match.getScoreAgainst(self)
 		return nOfScoreAgainst
 
 	def __lt__(self, team):
@@ -80,41 +72,44 @@ class Match:
 		self.winner = Team()
 		self.loser = Team()
 
-	### WHY GOD WHY???
-	'''
-	def select(self,team):
-		if self.teamA == team:
-			return self.teamA
-		elif self.teamB == team:
-			return self.teamB
-		else: print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
-
-	def scoreOf(self,team):
-		if self.teamA == team:
-			return self.scoreA
-		elif self.teamB == team:
-			return self.scoreB
-		else: print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
-
-	def setScore(self, team, score, secondTeam = None, secondScore = None):
-		assert not self.ended
-		if secondTeam == None and secondScore == None:
-			self.scoreOf(team) = score
+	# TODO : write the tests for
+	# here [
+	def getWinner(self):
+		return self.winner
+	def getLoser(self):
+		return self.loser
+	# Problem using set winner inside class match. see in endMatch() only usage now so...
+	#def setWinner(self, team):
+	#	self.winner = team.takingPlaceOf(self.winner)
+	#def setLoser(self, team):
+	#	self.winner = team.takingPlaceOf(self.winner)
+	def replace(self, firstTeam, secondTeam):
+		if self.teamA == firstTeam: 
+			self.teamA = secondTeam
+		elif self.teamB == firstTeam: 
+			self.teamB = secondTeam
+		elif self.teamA == secondTeam: 
+			self.teamA = firstTeam
+		elif self.teamB == secondTeam: 
+			self.teamB = firstTeam
 		else:
-			self.setScore(team,score)
-			self.setScore(secondTeam,secondScore)
-	'''
-	### It would be so beautiful !!
-
-	# TODO : write the tests of getScore()
+			raise ValueError("neither "+str(firstTeam.name)+" nor "+str(firstTeam.name)+" found")
 	def getScore(self, team):
 		if team == self.teamA:
 			return self.scoreA
 		elif team == self.teamB:
 			return self.scoreB
-		else: # TODO : decide what happens then...
-			print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
-
+		else:
+			raise ValueError("team "+str(team.name)+" not found")
+	def getScoreAgainst(self, team):
+		if team == self.teamA:
+			return self.scoreB
+		elif team == self.teamB:
+			return self.scoreA
+		else:
+			raise ValueError("team "+str(team.name)+" not found")
+	# to here ]
+	
 	def setScore(self, team, score, secondTeam = None, secondScore = None):
 		assert not self.ended
 		if secondTeam == None and secondScore == None:
@@ -122,26 +117,43 @@ class Match:
 				self.scoreA = score
 			elif team == self.teamB:
 				self.scoreB = score
-			else: # TODO : decide what happens then...
-				print "\tWARNING : setScore input team "+str(team.name)+" was not one of match actual teams "+str(self.teamA.name)+" and "+str(self.teamB.name)
+			else:
+				raise ValueError("team "+str(team.name)+" not found") 
 		else:
 			self.setScore(team,score)
 			self.setScore(secondTeam,secondScore)
 
-	# NOTE : we could choose to also set score when ending match, just add arguments and call setScore() 
-	def endMatch(self):
+	def endMatch(self, team=None, score=None, secondTeam=None, secondScore=None):
 		assert not self.ended
-		if self.scoreA == self.scoreB:
-			self.tie = True
-			print "WARNING : no behaviour decided for a tie" # TODO : who wins? who loses?
+		if not (team==None and score==None and secondTeam==None and secondScore==None):
+			setScore(self, team, score, secondTeam, secondScore)
 		elif self.scoreA > self.scoreB:
 			self.winner = self.teamA.takingPlaceOf(self.winner)
 			self.loser = self.teamB.takingPlaceOf(self.loser)
 		elif self.scoreA < self.scoreB:
 			self.winner = self.teamB.takingPlaceOf(self.winner)
 			self.loser = self.teamA.takingPlaceOf(self.loser)
+		else:
+			self.tie = True
+			raise ValueError("No tie allowed")
 		self.ended = True
 
+	'''
+	def endMatch(self, team = None, score = None, secondTeam = None, secondScore = None):
+		assert not self.ended
+		if not (team==None and score==None and secondTeam==None and secondScore==None):
+			setScore(self, team, score, secondTeam, secondScore)
+		if self.scoreA > self.scoreB:
+			self.setWinner(self.teamA)
+			self.setLoser(self.teamB)
+		elif self.scoreA < self.scoreB:
+			self.setWinner(self.teamB)
+			self.setLoser(self.teamA)
+		else:
+			self.tie = True
+			raise ValueError("No tie allowed")
+		self.ended = True
+	'''
 	# To implement : match location, match time, match versus?, match delete(+ team.removeMatch test)
 	# if match already exists, copy itself to the existing match?
 
