@@ -448,159 +448,102 @@ class Test_match_endMatch_directly:
 	def test_loser_was_defined_B_beats_A(self):
 		self.matchAB2.loser == self.teamAlice
 
-#
-# TODO : test on countWins, tests sorting and lt. Use old tests!
-
-
-#
-#
-#
-#
-#
-#
-# OLD TESTS
-	
-class TestMatch:
-	
+class Test_teams_countWins_countLosses_lt_and_sort:
 	def setup_method(self,method):
-		self.teamAlice = Team("Alice")
-		self.teamBob = Team("Bob")
-		self.teamCharlie = Team("Charlie")
-		self.teamDave = Team("Dave")
-		self.matchAB = Match(self.teamAlice, self.teamBob,"MatchAB")	
-		self.matchCD = Match(self.teamCharlie, self.teamDave,"MatchCD")
-		
-	def teardown_method(self,method):
-		del self.teamAlice
-		del self.teamBob
-		del self.teamCharlie
-		del self.teamDave
-		del self.matchAB
-		del self.matchCD
-
-	def test_endMatch(self):
-		self.matchAB.setScore(self.teamAlice,7,self.teamBob,4)
-		self.matchAB.endMatch()
-		assert self.matchAB.ended
-		assert self.matchAB.winner == self.teamAlice
-		assert self.matchAB.loser == self.teamBob
-
-
-class TestTeamAndMatch:
-
-	def setup_method(self,method):
-		self.teamAlice = Team("Alice")
-		self.teamBob = Team("Bob")
-		self.teamCharlie = Team("Charlie")
-		self.teamDave = Team("Dave")
-		self.matchAB = Match(self.teamAlice,self.teamBob)
-		self.matchAC = Match(self.teamAlice,self.teamCharlie)
-		self.matchAD = Match(self.teamAlice,self.teamDave)
-		self.matchCD = Match(self.teamCharlie,self.teamDave)
-		self.matchWABvWCD = Match(self.matchAB.winner,self.matchCD.winner)
-		self.matchWABvLCD = Match(self.matchAB.winner,self.matchCD.loser)
-		self.matchFinal = Match(self.matchWABvWCD.winner,self.matchWABvLCD.winner)
-
+		self.teamAlice = Team("Alice") 		#toset: 2-1-15-11 
+		self.teamBob = Team("Bob") 			#toset: 2-1-15-11 #tie
+		self.teamCharlie = Team("Charlie") 	#toset: 2-1-15-13 #more sA
+		self.teamDave = Team("Dave")		#toset: 2-1-13-11 #less sF
+		self.teamElise = Team("Elise")		#toset: 2-2-15-11 #more loss
+		self.teamFred = Team("Fred")		#toset: 1-1-15-11 #less wins
+		self.teamGreg = Team("Greg")		#play to set only
+		Match(self.teamAlice,self.teamBob).endMatch(self.teamAlice,5,self.teamBob,3)
+		Match(self.teamAlice,self.teamGreg).endMatch(self.teamAlice,7,self.teamGreg,3)
+		Match(self.teamAlice,self.teamBob).endMatch(self.teamAlice,3,self.teamBob,5)
+		Match(self.teamBob,self.teamGreg).endMatch(self.teamBob,7,self.teamGreg,3)
+		Match(self.teamCharlie,self.teamDave).endMatch(self.teamCharlie,5,self.teamDave,3)
+		Match(self.teamCharlie,self.teamGreg).endMatch(self.teamCharlie,7,self.teamGreg,5)
+		Match(self.teamCharlie,self.teamDave).endMatch(self.teamCharlie,3,self.teamDave,5)
+		Match(self.teamDave,self.teamGreg).endMatch(self.teamDave,5,self.teamGreg,3)
+		Match(self.teamElise,self.teamFred).endMatch(self.teamElise,11,self.teamFred,5)
+		Match(self.teamElise,self.teamGreg).endMatch(self.teamElise,2,self.teamGreg,0)
+		Match(self.teamElise,self.teamGreg).endMatch(self.teamElise,0,self.teamGreg,3)
+		Match(self.teamElise,self.teamGreg).endMatch(self.teamElise,2,self.teamGreg,3)
+		Match(self.teamFred,self.teamGreg).endMatch(self.teamFred,10,self.teamGreg,0)
+		self.lst = [self.teamBob,self.teamDave,self.teamAlice,self.teamCharlie,self.teamFred,self.teamElise]
+		self.decLst = [self.teamBob,self.teamAlice,self.teamCharlie,self.teamDave,self.teamElise,self.teamFred]
+		self.incLst = [self.teamFred,self.teamElise,self.teamDave,self.teamCharlie,self.teamBob,self.teamAlice]
 	def teardown_method(self,method):
 		del self.teamAlice 
 		del self.teamBob
 		del self.teamCharlie
 		del self.teamDave
-		del self.matchAB
-		del self.matchAC
-		del self.matchAD
-		del self.matchCD
-		del self.matchWABvWCD
-		del self.matchWABvLCD
-		del self.matchFinal
-
-	def test_setup(self):
-		assert len(self.teamAlice.matchList) == 3
-		assert len(self.teamBob.matchList) == 1
-		assert len(self.teamCharlie.matchList) == 2
-		assert len(self.teamDave.matchList) == 2
-		assert self.matchWABvWCD in self.matchAB.winner.matchList
-		assert self.matchWABvLCD in self.matchAB.winner.matchList 
-
-	def test_Team_takingPlaceOf(self):
-		self.matchAB.winner = self.teamAlice.takingPlaceOf(self.matchAB.winner)
-		assert self.matchWABvLCD.teamA == self.matchAB.winner
-		assert self.matchAB.winner == self.teamAlice
-		assert self.matchAB in self.teamAlice.matchList
-		assert self.matchWABvWCD in self.teamAlice.matchList
-		assert self.matchWABvLCD in self.teamAlice.matchList
-		assert self.matchWABvLCD.teamA == self.teamAlice
-
-	def test_Match_endMatch(self):
-		self.matchCD.setScore(self.teamDave,1)
-		self.matchCD.endMatch()
-		assert self.matchCD.winner == self.teamDave
-		assert self.matchWABvWCD in self.teamDave.matchList
-		assert self.matchWABvLCD in self.teamCharlie.matchList
-		assert self.matchCD.ended
-		assert self.matchWABvWCD.teamB == self.teamDave
-		assert self.matchWABvLCD.teamB == self.teamCharlie
-
-	def test_Team_countWins_non_zero(self):
-		self.matchAB.setScore(self.teamAlice,1)
-		self.matchAC.setScore(self.teamAlice,1)
-		self.matchAD.setScore(self.teamDave,1)
-		self.matchAB.endMatch()
-		self.matchAC.endMatch()
-		self.matchAD.endMatch()
+		del self.teamElise
+		del self.teamFred
+		del self.teamGreg
+		
+	def test_setup_and_Team_countWins_non_zero(self):
 		assert self.teamAlice.countWins() == 2
-		assert self.teamBob.countWins() == 0
-		assert self.teamCharlie.countWins() == 0 
-		assert self.teamDave.countWins() == 1
-	
-
-	def test_Team_countLosses_non_zero(self):
-		self.matchAB.setScore(self.teamAlice,1)
-		self.matchAC.setScore(self.teamAlice,1)
-		self.matchAD.setScore(self.teamDave,1)
-		self.matchCD.setScore(self.teamDave,1)
-		self.matchAB.endMatch()
-		self.matchAC.endMatch()
-		self.matchAD.endMatch()
-		self.matchCD.endMatch()
+		assert self.teamBob.countWins() == 2
+		assert self.teamCharlie.countWins() == 2
+		assert self.teamDave.countWins() == 2
+		assert self.teamElise.countWins() == 2
+		assert self.teamFred.countWins() == 1
+	def test_setup_and_Team_countLosses_non_zero(self):
 		assert self.teamAlice.countLosses() == 1
 		assert self.teamBob.countLosses() == 1
-		assert self.teamCharlie.countLosses() == 2 
-		assert self.teamDave.countLosses() == 0
-
-	def test_Team_countScores(self):
-		self.matchAB.setScore(self.teamAlice,2,self.teamBob,1)
-		self.matchAC.setScore(self.teamAlice,3)
-		self.matchAD.setScore(self.teamDave,6)
-		self.matchCD.setScore(self.teamDave,7)
-		self.matchAB.endMatch()
-		self.matchAC.endMatch()
-		self.matchAD.endMatch()
-		self.matchCD.endMatch()
-		assert self.teamAlice.countScoresFor() == 5
-		assert self.teamAlice.countScoresAgainst() == 7
-		assert self.teamBob.countScoresAgainst() == 2
-		assert self.teamCharlie.countScoresAgainst() == 10 
+		assert self.teamCharlie.countLosses() == 1
+		assert self.teamDave.countLosses() == 1
+		assert self.teamElise.countLosses() == 2
+		assert self.teamFred.countLosses() == 1
+	def test_setup_ScoresFor(self):
+		assert self.teamAlice.countScoresFor() == 15
+		assert self.teamBob.countScoresFor() == 15
+		assert self.teamCharlie.countScoresFor() == 15
 		assert self.teamDave.countScoresFor() == 13
+		assert self.teamElise.countScoresFor() == 15
+		assert self.teamFred.countScoresFor() == 15
+	def test_setup_ScoresAgainst(self):
+		assert self.teamAlice.countScoresAgainst() == 11
+		assert self.teamBob.countScoresAgainst() == 11
+		assert self.teamCharlie.countScoresAgainst() == 13
+		assert self.teamDave.countScoresAgainst() == 11
+		assert self.teamElise.countScoresAgainst() == 11
+		assert self.teamFred.countScoresAgainst() == 11
 
-	def test_sorting_teams(self):
-		self.matchAB.setScore(self.teamAlice,2,self.teamBob,1)
-		self.matchAB.endMatch()
-		self.matchAC.setScore(self.teamAlice,6,self.teamCharlie,4)
-		self.matchAC.endMatch()
-		self.matchAD.setScore(self.teamAlice,4,self.teamDave,9)
-		self.matchAD.endMatch()
-		self.matchCD.setScore(self.teamCharlie,5,self.teamDave,2)
-		self.matchCD.endMatch()
-		# A : 2-1-12-14 , C : 1-2-9-8 , D : 1-1-11-9
-		assert self.teamAlice > self.teamCharlie
+	def test_lt_exact_Tie(self):
+		assert not self.teamBob < self.teamAlice
+	def test_rev_lt_exact_Tie(self):
+		assert not self.teamAlice < self.teamBob
+	def test_lt_when_more_scoreAgainst(self):
 		assert self.teamCharlie < self.teamAlice
-		assert self.teamCharlie < self.teamDave
-		assert sorted([self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave], reverse = True) == [self.teamAlice,self.teamDave,self.teamCharlie,self.teamBob]
+	def test_not_lt_when_less_scoreAgainst(self):
+		assert not self.teamAlice < self.teamCharlie
+	def test_lt_when_less_scoreFor(self):
+		assert self.teamDave < self.teamAlice
+	def test_not_lt_when_more_scoreFor(self):
+		assert not self.teamAlice < self.teamDave
+	def test_lt_when_more_losses(self):
+		assert self.teamElise < self.teamAlice
+	def test_not_lt_when_less_losses(self):
+		assert not self.teamAlice < self.teamElise
+	def test_lt_when_less_wins(self):
+		assert self.teamFred < self.teamAlice
+	def test_not_lt_when_more_wins(self):
+		assert not self.teamAlice < self.teamFred
+	
+	def test_sorted(self):
+		assert sorted(self.lst) == self.incLst
+	def test_sorted_rev(self):
+		assert sorted(self.lst,reverse=True) == self.decLst
+	def test_sort(self):
+		self.lst.sort()
+		assert self.lst == self.incLst	
+	def test_sort_rev(self):
+		self.lst.sort(reverse=True)
+		assert self.lst == self.decLst
 
 
-#
-# TEST on CLASS POOL
 	
 class TestPool:
 	#Tests on class Pool

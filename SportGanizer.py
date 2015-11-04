@@ -46,16 +46,16 @@ class Team:
 			if match.getLoser() == self: 
 				nOfLosses += 1
 		return nOfLosses
-	def __lt__(self, team):
+	def __lt__(self, team): # NOTE : __lt__ is not the opposite of __gt__ in the case of an exact tie. 
 		if self.countWins() == team.countWins():
 			if self.countLosses() == team.countLosses():
 				if self.countScoresFor() == team.countScoresFor():
-					return self.countScoresAgainst() > self.countScoresAgainst() 
+					return self.countScoresAgainst() > team.countScoresAgainst()
 				else: return self.countScoresFor() < team.countScoresFor()
 			else : return self.countLosses() > team.countLosses()
 		else: return self.countWins() < team.countWins()
 
-	#To implement : team delete with incidence on matchs, __lt__ conditionned on selected pool,
+	#To implement : team delete with incidence on matchs, __lt__ conditionned on selected pool, __cmp__ or __gt__
 
 
 class Match:
