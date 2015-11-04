@@ -467,20 +467,21 @@ class TestTournament:
 		del self.poolA
  	
 	def testTournamentInitialization(self):
-		assert (self.tournamentA.name == None)
-		assert (self.tournamentA.poolList == [])
+		assert self.tournamentA.name == None
+		assert self.tournamentA.poolList == []
 		
  	def testInitializationRename(self):
 		self.tournamentA.rename("Ultimate Tournament")
-		assert (self.tournamentA.name == "Ultimate Tournament")
+		assert self.tournamentA.name == "Ultimate Tournament"
 		
 	def testAddingPool(self):
 		self.tournamentA.addPool(self.poolA)
-		assert (self.tournamentA.poolList == [self.poolA])
+		assert self.tournamentA.poolList == [self.poolA]
 		
 class TestSingleElimination:
 	def setup_class(self):
-		self.thePool = Pool('inputPool', [Team('team1'),Team('team2'),Team('team3'),Team('team4'),Team('team5'),Team('team6'),Team('team7'),Team('team8')])
+		self.nOfTeams = 35
+		self.thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, self.nOfTeams+1)])
 		self.theTournament = SingleElimination()
 		self.theTournament.setInputPool(self.thePool)
 		
@@ -489,12 +490,17 @@ class TestSingleElimination:
 		del self.thePool
 		
 	def testSettingInputPool(self):
-		assert (self.theTournament.inputPool == self.thePool)
+		assert self.theTournament.inputPool == self.thePool
+		assert self.theTournament.nOfTeams == self.nOfTeams
+		assert self.theTournament.nOfAdditionnalTeams == 3
+		assert self.theTournament.nOfAdditionnalFirstPoolMatches == 3
+		assert self.theTournament.nOfFirstPoolByes == 29
+		assert self.theTournament.nTeamsIsPowerOf2 == False
+		assert self.theTournament.nOfLayers == 6
 		
 	def testbuildAllPools(self):
-		pass
-		#self.theTournament.buildAllPools()
-		
+		self.theTournament.buildAllPools()
+		assert self.theTournament.poolList[0] == self.thePool
 		#NEED to write all assert	
 		
 		
