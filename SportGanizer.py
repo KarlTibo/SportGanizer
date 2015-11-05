@@ -207,11 +207,39 @@ class SingleElimination(Tournament):
 		
 	def setInputPool(self, initPool):
 		self.inputPool = initPool
-		self.nOfInitialTeams = len(self.inputPool.teamList)
-		self.nInitialTeamsIsPowerOf2 = float.is_integer(log2(self.nOfInitialTeams))
-		self.nOfAdditionnalTeams = self.nOfInitialTeams%(2**(int(log2(self.nOfInitialTeams))))
-		self.nOfByes = 2**(int(log2(self.nOfInitialTeams)))-self.nOfAdditionnalTeams
+		self.inputPool.rename("Pool_1")
+		self.addPool(self.inputPool)
 	
+	def createPoolList(self):
+		self.nOfTeamsInLatestPool = len(self.poolList[-1].teamList)
+		if self.nOfTeamsInLatestPool == 1:
+			print(str(self.poolList[-1].teamList[0].name)+' is the winner of the Tournament!')
+			pass
+		else:
+			self.createPoolMatchListAndPrepareNextPool()
+			self.createPoolList()
+			
+	def createPoolMatchListAndPrepareNextPool(self):
+		# Declaring variables for clearer code
+		pool = self.poolList[-1]
+		nOfTeams = len(pool.teamList)
+		self.nOfByes = (2**(int(log2(nOfTeams)+1)))%nOfTeams
+		
+		# Creating the next pool
+		nextPoolNumber = len(self.poolList)+1
+		tempPool = Pool('Pool_'+str(nextPoolNumber), []) # BUG : If i dont put (, []) to initialize the teamList, it doesnt work, WTF TABARNAK
+		
+		# Creating matches in the current pool and adding teams to the next one.
+		for i in range(self.nOfByes):
+			tempPool.addTeam(pool.teamList[i])
+		for i in range((nOfTeams-self.nOfByes)/2):
+			nextWorstTeam = nOfTeams-1-i
+			nextBestTeam = self.nOfByes + i
+			pool.createMatch(nextWorstTeam, nextBestTeam, 'Match_'+str(pool.name[-1])+'-'+str(i+1))
+			tempPool.addTeam(pool.matchList[-1].getWinner())
+		self.addPool(tempPool)
+
+	'''
 	def createPoolList(self):
 		#Determine if last pool had a power of two team number
 		if len(self.poolList) != 0:
@@ -257,20 +285,6 @@ class SingleElimination(Tournament):
 			teamList = [self.poolList[-1].matchList[i].getWinner() for i in range(len(self.poolList[-1].matchList))]
 		return teamList
 		
-		'''
-		if nTeamsInLatestPoolIsPowerOf2 == False:
-			if len(self.poolList) == 0:
-				teamList = self.inputPool.teamList[nOfByes:]
-			else:
-				teamList = self.inputPool.teamList[:nOfByes]
-				teamList.extend([self.poolList[-1].matchList[i].getWinner() for i in range(len(self.poolList[-1].matchList))])
-		elif nTeamsInLatestPoolIsPowerOf2 and len(self.poolList) == 0:
-			teamList = self.inputPool.teamList
-		else:
-			teamList = [self.poolList[-1].matchList[i].getWinner() for i in range(len(self.poolList[-1].matchList))]
-		return teamList
-		'''
-		
 	def createNextPoolMatchList(self, pool):
 		nOfTeams = len(pool.teamList)
 		if nOfTeams < 2 : 
@@ -279,6 +293,8 @@ class SingleElimination(Tournament):
 			nextWorstTeam = nOfTeams-1-i
 			nextBestTeam = i
 			pool.createMatch(nextWorstTeam, nextBestTeam, 'Match_'+str(pool.name[-1])+'-'+str(i+1))
+	'''
+
 	'''	
 	def buildAllPools(self):
 		self.buildFirstPool()
