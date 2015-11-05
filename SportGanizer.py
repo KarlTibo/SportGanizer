@@ -71,7 +71,7 @@ class Match:
 		self.tie = False
 		self.scoreA = 0
 		self.scoreB = 0
-		self.winner = Team()
+		self.winner = Team(str(self.name)+'-winner')
 		self.loser = Team()
 
 	###[ NOTE : this one (used in takingPlaceOf, should be private, because it doesn't handle matchList... then we could code a public version using takingPlaceOf...)
@@ -190,6 +190,9 @@ class Tournament:
 
 	def addPool(self, pool):
 		self.poolList.append(pool)
+		
+	def removePool(self, pool):
+		self.poolList.remove(pool)
 	
 		
 class SingleElimination(Tournament):
@@ -204,13 +207,79 @@ class SingleElimination(Tournament):
 		
 	def setInputPool(self, initPool):
 		self.inputPool = initPool
-		self.nOfTeams = self.inputPool.numberOfTeams
-		self.nOfAdditionnalTeams = self.nOfTeams%(2**(int(log2(self.nOfTeams))))
-		self.nOfAdditionnalFirstPoolMatches = self.nOfAdditionnalTeams
-		self.nOfFirstPoolByes = 2**(int(log2(self.nOfTeams)))-self.nOfAdditionnalTeams
-		self.nTeamsIsPowerOf2 = (self.nOfAdditionnalTeams == 0)
-		self.nOfLayers = int(self.calcNumberOfLayers(self.nOfTeams))
+		self.nOfInitialTeams = len(self.inputPool.teamList)
+		self.nInitialTeamsIsPowerOf2 = float.is_integer(log2(self.nOfInitialTeams))
+		self.nOfAdditionnalTeams = self.nOfInitialTeams%(2**(int(log2(self.nOfInitialTeams))))
+		self.nOfByes = 2**(int(log2(self.nOfInitialTeams)))-self.nOfAdditionnalTeams
+	
+	def createPoolList(self):
+		#Determine if last pool had a power of two team number
+		if len(self.poolList) != 0:
+			self.nOfTeamsInLatestPool = len(self.poolList[-1].teamList)
+		else:
+			self.nOfTeamsInLatestPool = len(self.inputPool.teamList)
+
+		#Create Pools
+		if self.nOfTeamsInLatestPool < 2:
+			raise ValueError("Cannot create a tournament with less than 2 teams!")
+		elif self.nOfTeamsInLatestPool == 2:
+			if len(self.poolList) == 0:
+				self.createNextPool()
+				self.createPoolList()
+			elif len(self.poolList) == 1 and len(self.inputPool.teamList) > 2:
+				self.createNextPool()
+				self.createPoolList()				
+			else:
+				pass
+		else:
+			self.createNextPool()
+			self.createPoolList()
+
+	def createNextPool(self):
+		nextPoolNumber = len(self.poolList)+1
+		tempPool = Pool('Pool_'+str(nextPoolNumber), self.createNextPoolTeamList())
+		self.createNextPoolMatchList(tempPool)
+		self.addPool(tempPool)
+
+	def createNextPoolTeamList(self):
+		if len(self.poolList) == 0:
+			if not self.nInitialTeamsIsPowerOf2:
+				teamList = self.inputPool.teamList[self.nOfByes:]
+			else:
+				teamList = self.inputPool.teamList
+		elif len(self.poolList) == 1:
+			if not self.nInitialTeamsIsPowerOf2:
+				teamList = self.inputPool.teamList[:self.nOfByes]
+				teamList.extend([self.poolList[0].matchList[i].getWinner() for i in range(len(self.poolList[0].matchList))])
+			else:
+				teamList = [self.poolList[0].matchList[i].getWinner() for i in range(len(self.poolList[0].matchList))]
+		else:
+			teamList = [self.poolList[-1].matchList[i].getWinner() for i in range(len(self.poolList[-1].matchList))]
+		return teamList
 		
+		'''
+		if nTeamsInLatestPoolIsPowerOf2 == False:
+			if len(self.poolList) == 0:
+				teamList = self.inputPool.teamList[nOfByes:]
+			else:
+				teamList = self.inputPool.teamList[:nOfByes]
+				teamList.extend([self.poolList[-1].matchList[i].getWinner() for i in range(len(self.poolList[-1].matchList))])
+		elif nTeamsInLatestPoolIsPowerOf2 and len(self.poolList) == 0:
+			teamList = self.inputPool.teamList
+		else:
+			teamList = [self.poolList[-1].matchList[i].getWinner() for i in range(len(self.poolList[-1].matchList))]
+		return teamList
+		'''
+		
+	def createNextPoolMatchList(self, pool):
+		nOfTeams = len(pool.teamList)
+		if nOfTeams < 2 : 
+			raise ValueError("Cannot create a match with less than 2 teams!")
+		for i in range(nOfTeams/2):
+			nextWorstTeam = nOfTeams-1-i
+			nextBestTeam = i
+			pool.createMatch(nextWorstTeam, nextBestTeam, 'Match_'+str(pool.name[-1])+'-'+str(i+1))
+	'''	
 	def buildAllPools(self):
 		self.buildFirstPool()
 		self.buildOtherPools()
@@ -263,7 +332,7 @@ class SingleElimination(Tournament):
 		else:
 			nOfLayers = int(log2(nOfTeams))+1
 			return nOfLayers
-
+	'''
 	def show(self):
 		for pool in self.poolList:
 			print '\n'+str(pool.name)+'\n'
@@ -284,9 +353,10 @@ class SingleElimination(Tournament):
 	'''
 				
 if __name__ == "__main__":
-	nOfTeams = 13
+	nOfTeams = int(input("How many teams are in your tournament?"))
 	thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)])
 	theTournament = SingleElimination()
 	theTournament.setInputPool(thePool)
-	theTournament.buildAllPools()
+	#theTournament.buildAllPools()
+	theTournament.createPoolList()
 	theTournament.show()

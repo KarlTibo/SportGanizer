@@ -91,10 +91,6 @@ class TestUnnamedMatchWithBasicTeamsInitialization:
 	def test_score_is_zero_zero(self):
 		assert self.match.scoreA == 0
 		assert self.match.scoreB == 0
-	def test_winner_is_dummy(self):
-		assert self.match.winner.isUnnamedAndHasNoMatch()
-	def test_loser_is_dummy(self):
-		assert self.match.winner.isUnnamedAndHasNoMatch()
 
 	def test_match_is_in_teamA_matchList(self):
 		assert self.match in self.match.teamA.matchList
@@ -122,10 +118,6 @@ class TestNamedMatchWithDifferentiableTeamsInitialization:
 	def test_score_is_zero_zero(self):
 		assert self.match.scoreA == 0
 		assert self.match.scoreB == 0
-	def test_winner_is_dummy(self):
-		assert self.match.winner.isUnnamedAndHasNoMatch()
-	def test_loser_is_dummy(self):
-		assert self.match.winner.isUnnamedAndHasNoMatch()
 
 	def test_match_is_in_teamA_matchList(self):
 		assert self.match in self.match.teamA.matchList
@@ -617,16 +609,16 @@ class TestSingleElimination:
 		
 	def testSettingInputPool(self):
 		assert self.theTournament.inputPool == self.thePool
-		assert self.theTournament.nOfTeams == self.nOfTeams
-		assert self.theTournament.nOfAdditionnalTeams == 3
-		assert self.theTournament.nOfAdditionnalFirstPoolMatches == 3
-		assert self.theTournament.nOfFirstPoolByes == 29
-		assert self.theTournament.nTeamsIsPowerOf2 == False
-		assert self.theTournament.nOfLayers == 6
+		# assert self.theTournament.nOfTeams == self.nOfTeams
+		# assert self.theTournament.nOfAdditionnalTeams == 3
+		# assert self.theTournament.nOfAdditionnalFirstPoolMatches == 3
+		# assert self.theTournament.nOfFirstPoolByes == 29
+		# assert self.theTournament.nTeamsIsPowerOf2 == False
+		# assert self.theTournament.nOfLayers == 6
 		
-	def testbuildAllPools(self):
-		self.theTournament.buildAllPools()
-		assert self.theTournament.poolList[0] == self.thePool
+	# def testbuildAllPools(self):
+		# self.theTournament.createPoolList()
+		# assert self.theTournament.poolList[0] == self.thePool
 		#NEED to write all assert	
 		
 		
