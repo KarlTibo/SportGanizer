@@ -165,8 +165,12 @@ class Pool:
 		self.name = name
 		
 	def addTeam(self, newTeam):
-		self.numberOfTeams += 1
-		self.teamList.append(newTeam)
+		if isinstance(newTeam, list):
+			self.numberOfTeams += len(newTeam)
+			self.teamList.extend(newTeam)
+		else:
+			self.numberOfTeams += 1
+			self.teamList.append(newTeam)
 		
 	def createMatch(self, teamANumber, teamBNumber, matchName = None):
 		self.numberOfMatches += 1
@@ -201,7 +205,7 @@ class SingleElimination(Tournament):
 	# TODO: 
 		#updatePool using the GUI
 		#add line in buildFirstPool and buildOtherPools assigning time slots and locations to matchs in each pool via pool.assignTimeSlotsToMatches and pool.assignLocationsToMatches
-		
+
 	def __init__(self):
 		Tournament.__init__(self, 'single elimination')
 		
