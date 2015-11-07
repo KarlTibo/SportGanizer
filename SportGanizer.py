@@ -16,9 +16,6 @@ class Pool:
 			self.teamList = []
 		self.numberOfMatches = 0
 		self.matchList = []
-	def rename(self,name):
-		self.name = name
-		
 	def addTeam(self, newTeam):
 		if isinstance(newTeam, list):
 			self.nOfTeams += len(newTeam)
@@ -48,8 +45,6 @@ class Tournament:
 		self.name = name
 		self.poolList = []
 		self.nOfPools = 0
-	def rename(self, name):
-		self.name = name
 	def addPool(self, pool):
 		self.poolList.append(pool)
 		self.nOfPools += 1
@@ -63,12 +58,12 @@ class SingleElimination(Tournament):
 		Tournament.__init__(self, 'single elimination')	
 		if initPool:
 			self.inputPool = initPool
-			self.inputPool.rename("Pool_1")
+			self.inputPool.name = "Pool_1"
 			self.addPool(self.inputPool)
 
 	def setInputPool(self, initPool):
 		self.inputPool = initPool
-		self.inputPool.rename("Pool_1")
+		self.inputPool.name = "Pool_1"
 		self.addPool(self.inputPool)
 	
 	def createPoolList(self):
@@ -110,8 +105,7 @@ class SingleElimination(Tournament):
 		for pool in self.poolList:
 			print '\n'+str(pool.name)+'\n'
 			for match in pool.matchList:
-				print str(match.name)+' : '+str(match.teamA.name)+' vs '+str(match.teamB.name)+'\n'
-
+				match.show()
 	# TODO: 
 		#updatePool using the GUI
 		#add line in buildFirstPool and buildOtherPools assigning time slots and locations to matchs in each pool via pool.assignTimeSlotsToMatches and pool.assignLocationsToMatches

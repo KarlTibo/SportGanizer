@@ -72,8 +72,8 @@ class TestPool_createMatch:
 	def test_match_name(self):
 		assert self.poolParty.matchList[0].name == "matchTest"
 	def test_match_teams(self):
-		assert self.poolParty.matchList[0].teamA == self.teamAlice
-		assert self.poolParty.matchList[0].teamB == self.teamBob
+		assert self.poolParty.matchList[0]._teamA == self.teamAlice
+		assert self.poolParty.matchList[0]._teamB == self.teamBob
 
 class TestPool_addTeam_list:
 	def setup_method(self,method):
@@ -124,7 +124,7 @@ class TestTournament:
 		assert self.tournamentA.poolList == []
 		
  	def testInitializationRename(self):
-		self.tournamentA.rename("Ultimate Tournament")
+		self.tournamentA.name = "Ultimate Tournament"
 		assert self.tournamentA.name == "Ultimate Tournament"
 		
 	def testAddingPool(self):
