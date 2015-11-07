@@ -1,156 +1,123 @@
 # -*- coding: utf-8 -*-
 from numpy import *
+import copy
 
-
-class Team:
-
-	def __init__(self, initName = "defaultTeam"):
-		self.name = initName 
-		self.matchList = []
-		self.nextMatchIndex = 0
-
-	def __lt__(self, team_to_compare):
-		if True :
-			return True
-		else:
-			return False
-	
-	def _addMatch(self, match):
-		self.matchList.append(match)
-	
-	def _removeMatch(self, match):
-		self.matchList.remove(match)
-	
-	def _increaseNextMatchIndex(self):
-		self.nextMatchIndex = self.nextMatchIndex + 1
-	
-	def _becomes(self, team):
-		#Could it ultimately be the "=" operator ?
-		#Important for crossovers when a matchList already exist for an undetermined team
-		self.matchList.extend(team.matchList)
-		self._increaseNextMatchIndex()
-	
-	def _swap(self, team):
-		tempMatchList=self.matchList
-		tempName=self.name
-		tempNextMatchIndex=self.nextMatchIndex
-		self.matchList=team.matchList
-	#To implement : team stats, team delete?
-	#Functions :  swap(using deepcopy)
-	#_becomes : needs to erase future matches (crossovers)
-
-
-class Match:
-	def __init__(self, initName = "defaultMatch", initTeamA = Team(), initTeamB = Team(), initWeight = 0):
-		self.name = initName
-		self.teamA = initTeamA
-		self.teamA._addMatch(self)
-		self.teamB = initTeamB
-		self.teamB._addMatch(self)
-		self.weight = initWeight
-		self.winner = Team(self.name+"_"+"Winner")
-		self.loser = Team(self.name+"_"+"Loser")
-		
-	def replaceDummyTeam(self, dummyTeam, newTeam):
-		if self.teamA == dummyTeam:
-			self.teamA._removeMatch(self)
-			self.teamA = newTeam
-			self.teamA._addMatch(self)
-			self.teamA._increaseNextMatchIndex()
-			del dummyTeam
-		elif self.teamB == dummyTeam:
-			self.teamB._removeMatch(self)
-			self.teamB = newTeam
-			self.teamB._addMatch(self)
-			self.teamB._increaseNextMatchIndex()
-			del dummyTeam
-		else:
-			pass # SHOULD WARN
-
-	def setWinner(self, team):
-		if self.winner.matchList == []: #Limit case that might need fixing
-			#team.wasLastMatch()        Needs implementation
-			self.winner = team
-			#Means the tournament is over!?!? Needs something more.
-		else:
-			winnerMatch=self.winner.matchList[0] #Shouldn't it be self.winner.matchList[self.nextMatchIndex-1] ?
-			winnerMatch.replaceDummyTeam(self.winner, team) 
-			self.winner = team #Why is that line there? Doesn't it destroy the whole point of using replaceDummyTeam ?
-	
-	def setResult(self, teamA, teamAscore, teamB, teamBscore):
-		if (teamA != self.teamA and teamA != self.teamB):
-			teamIsNotInMatch_EXCEPTION(self, teamA)
-		elif (teamB != self.teamA and teamB != self.teamB):
-			teamIsNotInMatch_EXCEPTION(self, teamB)
-		else:
-			if teamAscore > teamBscore:
-				setWinner(teamA)
-			elif teamBscore > teamAscore:
-				setWinner(teamB)
-			else:
-				pass #If tie, maybe something happens if possible
-		
-	def teamIsNotInMatch_EXCEPTION(match, team):
-		print team.name+" "+"is not in"+" "+match.name
-		
-		
-	#To implement : match result, match location, match time, match versus?, match delete(+ team.removeMatch test)
-	# match winner, match loser
-	#if match already exists, copy itself to the existing match
-	#coding = and == operators of matches
-	#Functions : match.setResult(tests) and losers!!
-	# match.setVersus?
-
+from teamatch import *
 
 
 class Pool:
-	def __init__(self, initName = "defaultPool", initTeamList = []):
+	def __init__(self, initName=None, initTeamList=None):
 		self.name = initName
-		self.numberOfTeams = 0
+		if initTeamList:
+			self.nOfTeams = len(initTeamList)
+			self.teamList = initTeamList
+		else:
+			self.nOfTeams = 0
+			self.teamList = []
 		self.numberOfMatches = 0
-		self.teamList = initTeamList
 		self.matchList = []
-		
 	def addTeam(self, newTeam):
-		self.numberOfTeams += 1
-		self.teamList.append(newTeam)
-		print("NIY")
-		
-	def addMatch(self, matchName, teamANumber, teamBNumber):
-		newMatch = Match(matchName, teamList[teamANumber], teamList[teamBNumber])
-		self.matchList.append(newMatch)
-		print("NIY")
+		if isinstance(newTeam, list):
+			self.nOfTeams += len(newTeam)
+			self.teamList.extend(newTeam)
+		else:
+			self.nOfTeams += 1
+			self.teamList.append(newTeam)
+	def createMatch(self, teamANumber, teamBNumber, matchName = None):
+		self.numberOfMatches += 1
+		self.newMatch = Match(self.teamList[teamANumber], self.teamList[teamBNumber], matchName)
+		self.matchList.append(self.newMatch)
 		
 	def ranking(self):
 		sortedTeamList = sorted(self.teamList)
-		print("NIY")
-		return sortedTeamList
+		return sortedTeamList	
+
+	# IMPORTANT: the Pool shall receive the Teams input from the GUI
+	# TODO:
+		#createTimeSlots(timeList) and assignTimeSlotsToMatches(timeSlots) OR a function that does both at same time, although that seems too large
+		#createLocations(locationList) and assignLocationsToMatches(locations) OR a function that does both at same time, although that seems too large
+
+
+
 
 class Tournament:
-	def __init__(self):
-		self.name = "no-name Tournament"
-		self.poolList = []
-			
-	def rename(self,name):
+	def __init__(self, name = None):
 		self.name = name
-
-	def addPool(self,pool):
+		self.poolList = []
+		self.nOfPools = 0
+	def addPool(self, pool):
 		self.poolList.append(pool)
+		self.nOfPools += 1
+	def removePool(self, pool):
+		self.poolList.remove(pool)
 	
-	
-	
+
 class SingleElimination(Tournament):
-	def __init__(self):
-		Tournament.__init__(self)
-		self.rename('no-name single elimination')
-			
+	''' Must input a pool with method setInputPool before using other functions. '''
+	def __init__(self, initPool = None):
+		Tournament.__init__(self, 'single elimination')	
+		if initPool:
+			self.inputPool = initPool
+			self.inputPool.name = "Pool_1"
+			self.addPool(self.inputPool)
+
+	def setInputPool(self, initPool):
+		self.inputPool = initPool
+		self.inputPool.name = "Pool_1"
+		self.addPool(self.inputPool)
 	
-	'''
-	def buildNextPool(prevPool):
-		rankedTeamList = pool.Ranking()
-		nextPool = Pool()
-		for team in len(rankedTeamList)
-			nextPool.addTeam(rankedTeamList[0])
-			nextPool.addTeam(rankedTeamList[0])
-		self.addPool(nextPool)
-	'''	
+	def createPoolList(self):
+		self.nOfTeamsInLatestPool = len(self.poolList[-1].teamList)
+		if self.nOfTeamsInLatestPool == 1:
+			print(str(self.poolList[-1].teamList[0].name)+' is the winner of the Tournament!')
+			pass
+		else:
+			self.createMatchsAndNextPool()
+			self.createPoolList()
+
+	def createMatchsAndNextPool(self):
+		inPool = self.poolList[-1]
+		nOfByes = (2**(int(log2(inPool.nOfTeams)+1)))%inPool.nOfTeams
+		nOfElim = (inPool.nOfTeams-nOfByes)/2
+		
+		# make nextPool part 1
+		outPool = Pool('Pool_'+str(self.nOfPools+1))
+		for i in range(nOfByes):
+			outPool.addTeam(inPool.teamList[i])
+		# make eliminations
+		for i in range(nOfElim):
+			nextWorstTeam = inPool.nOfTeams-1-i
+			nextBestTeam = nOfByes + i
+			elimName = 'Match_'+str(inPool.name[-1])+'-'+str(i+1)
+			inPool.createMatch(nextWorstTeam, nextBestTeam, elimName)
+			# make nextPool part 2
+			outPool.addTeam(inPool.matchList[-1].winner)
+		# make nextPool part 3
+		self.addPool(outPool)
+		# TODO: 
+			# need to be splitted : self.createMatchs() and pool.passingTeams()
+				# however, passing teams needs to be more flexible : pool.passingTeams()
+			# should access neither pool.teamList nor pool.nOfTeams... 
+				# functions to do : pool.size() pool.match(i) pool.team(i)
+				# there may be a way to unify pool.team(i) and pool.ranking()
+
+	def show(self):
+		for pool in self.poolList:
+			print '\n'+str(pool.name)+'\n'
+			for match in pool.matchList:
+				match.show()
+	# TODO: 
+		#updatePool using the GUI
+		#add line in buildFirstPool and buildOtherPools assigning time slots and locations to matchs in each pool via pool.assignTimeSlotsToMatches and pool.assignLocationsToMatches
+
+
+			
+if __name__ == "__main__":
+	
+	nOfTeams = int(input("How many teams are in your tournament?"))
+	thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)])
+	theTournament = SingleElimination()
+	theTournament.setInputPool(thePool)
+	theTournament.createPoolList()
+	theTournament.show()
+	
