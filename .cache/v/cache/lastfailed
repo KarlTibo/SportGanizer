@@ -1,1 +1,20 @@
-{}
+{
+  "tests-teamatch.py::Test_match_getScore_getScoreAgainst::()::test_match_getScore": true, 
+  "tests-teamatch.py::Test_match_getScore_getScoreAgainst::()::test_match_getScoreAgainst": true, 
+  "tests-teamatch.py::Test_match_getScore_getScoreAgainst::()::test_match_getScore_NameError": true, 
+  "tests-teamatch.py::Test_match_getWinner_getLoser::()::test_match_getLoser": true, 
+  "tests-teamatch.py::Test_match_getWinner_getLoser::()::test_match_getWinner": true, 
+  "tests-teamatch.py::Test_match_replace::()::test_replace_NameError": true, 
+  "tests-teamatch.py::Test_match_replace::()::test_replace_case1": true, 
+  "tests-teamatch.py::Test_match_replace::()::test_replace_case2": true, 
+  "tests-teamatch.py::Test_match_replace::()::test_replace_case3": true, 
+  "tests-teamatch.py::Test_match_replace::()::test_replace_case4": true, 
+  "tests-teamatch.py::Test_match_setLoser_setWinner::()::test_match_setLoser_loser": true, 
+  "tests-teamatch.py::Test_match_setLoser_setWinner::()::test_match_setLoser_loser_matchList": true, 
+  "tests-teamatch.py::Test_match_setLoser_setWinner::()::test_match_setLoser_matchs_get_loser": true, 
+  "tests-teamatch.py::Test_match_setLoser_setWinner::()::test_match_setLoser_matchs_get_winner": true, 
+  "tests-teamatch.py::Test_match_setLoser_setWinner::()::test_match_setWinner_winner": true, 
+  "tests-teamatch.py::Test_match_setLoser_setWinner::()::test_match_setWinner_winner_matchList": true, 
+  "tests-teamatch.py::Test_match_setScore_TWO_args::()::test_scoreA": true, 
+  "tests-teamatch.py::Test_match_setScore_TWO_args::()::test_scoreB": true
+}

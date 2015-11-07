@@ -9,52 +9,52 @@ class Team:
 		self.matchList = []
 	
 	###[ NOTE : this one should definitely be private, because it doesn't handle the match itself
-	def addMatch(self, match):
+	def _addMatch(self, match):
 		self.matchList.append(match)
 	###]
 
-	def isUnnamedAndHasNoMatch(self):
-		return ((self.name == None) and (self.matchList == []))
+	#def isUnnamedAndHasNoMatch(self):
+	#	return ((self.name == None) and (self.matchList == []))
 	def rename(self, name):
 		self.name = name
 	
-	def takingPlaceOf(self, team):
+	def _takingPlaceOf(self, team):
 		for match in team.matchList:
-			match.replace(self,team)
-			self.addMatch(match)
+			match._replace(self,team)
+			self._addMatch(match)
 		team.matchList = []
 		return self
 	
-	def countScoresFor(self):
+	def _countScoresFor(self):
 		nOfScoreFor = 0
 		for match in self.matchList:
-			nOfScoreFor += match.getScore(self)
+			nOfScoreFor += match._getScore(self)
 		return nOfScoreFor
-	def countScoresAgainst(self):
+	def _countScoresAgainst(self):
 		nOfScoreAgainst = 0
 		for match in self.matchList:
-			nOfScoreAgainst += match.getScoreAgainst(self)
+			nOfScoreAgainst += match._getScoreAgainst(self)
 		return nOfScoreAgainst
-	def countWins(self):
+	def _countWins(self):
 		nOfWins = 0
 		for match in self.matchList:
-			if match.getWinner() == self: 
+			if match.winner == self: 
 				nOfWins += 1
 		return nOfWins
-	def countLosses(self):
+	def _countLosses(self):
 		nOfLosses = 0
 		for match in self.matchList:
-			if match.getLoser() == self: 
+			if match.loser == self: 
 				nOfLosses += 1
 		return nOfLosses
 	def __lt__(self, team): # NOTE : __lt__ is not the opposite of __gt__ in the case of an exact tie. 
-		if self.countWins() == team.countWins():
-			if self.countLosses() == team.countLosses():
-				if self.countScoresFor() == team.countScoresFor():
-					return self.countScoresAgainst() > team.countScoresAgainst()
-				else: return self.countScoresFor() < team.countScoresFor()
-			else : return self.countLosses() > team.countLosses()
-		else: return self.countWins() < team.countWins()
+		if self._countWins() == team._countWins():
+			if self._countLosses() == team._countLosses():
+				if self._countScoresFor() == team._countScoresFor():
+					return self._countScoresAgainst() > team._countScoresAgainst()
+				else: return self._countScoresFor() < team._countScoresFor()
+			else : return self._countLosses() > team._countLosses()
+		else: return self._countWins() < team._countWins()
 
 	#To implement : team delete with incidence on matchs, __lt__ conditionned on selected pool, __cmp__ or __gt__
 
@@ -66,9 +66,9 @@ class Match:
 		self.name = name
 
 		self.teamA = teamA
-		self.teamA.addMatch(self)
+		self.teamA._addMatch(self)
 		self.teamB = teamB
-		self.teamB.addMatch(self)
+		self.teamB._addMatch(self)
 
 		self.ended = False
 		self.tie = False
@@ -77,8 +77,7 @@ class Match:
 		self.winner = Team(str(self.name)+'-winner')
 		self.loser = Team()
 
-	###[ NOTE : this one (used in takingPlaceOf, should be private, because it doesn't handle matchList... then we could code a public version using takingPlaceOf...)
-	def replace(self, firstTeam, secondTeam):
+	def _replace(self, firstTeam, secondTeam):
 		if self.teamA == firstTeam: 
 			self.teamA = secondTeam
 		elif self.teamB == firstTeam: 
@@ -89,31 +88,28 @@ class Match:
 			self.teamB = firstTeam
 		else:
 			raise ValueError("neither "+str(firstTeam.name)+" nor "+str(firstTeam.name)+" found")
-	# private?... we don't want to use this outside Match.endMatch() 
-	def setWinner(self, team):
-		self.winner = team.takingPlaceOf(self.winner)
-	def setLoser(self, team):
-		self.loser = team.takingPlaceOf(self.loser)
-	###]
-
-	def getScore(self, team):
+	def _setWinner(self, team):
+		self.winner = team._takingPlaceOf(self.winner)
+	def _setLoser(self, team):
+		self.loser = team._takingPlaceOf(self.loser)
+	def _getScore(self, team):
 		if team == self.teamA:
 			return self.scoreA
 		elif team == self.teamB:
 			return self.scoreB
 		else:
 			raise ValueError("team "+str(team.name)+" not found")
-	def getScoreAgainst(self, team):
+	def _getScoreAgainst(self, team):
 		if team == self.teamA:
 			return self.scoreB
 		elif team == self.teamB:
 			return self.scoreA
 		else:
 			raise ValueError("team "+str(team.name)+" not found")	
-	def getWinner(self):
-		return self.winner
-	def getLoser(self):
-		return self.loser
+	#def getWinner(self):
+	#	return self.winner
+	#def getLoser(self):
+	#	return self.loser
 
 	def setScore(self, team, score, secondTeam = None, secondScore = None):
 		assert not self.ended
@@ -133,11 +129,11 @@ class Match:
 		if not (team==None and score==None and secondTeam==None and secondScore==None):
 			self.setScore(team, score, secondTeam, secondScore)
 		if self.scoreA > self.scoreB:
-			self.setWinner(self.teamA)
-			self.setLoser(self.teamB)
+			self._setWinner(self.teamA)
+			self._setLoser(self.teamB)
 		elif self.scoreA < self.scoreB:
-			self.setWinner(self.teamB)
-			self.setLoser(self.teamA)
+			self._setWinner(self.teamB)
+			self._setLoser(self.teamA)
 		else:
 			self.tie = True
 			raise ValueError("No tie allowed")

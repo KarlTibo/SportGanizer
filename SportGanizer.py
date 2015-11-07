@@ -96,7 +96,7 @@ class SingleElimination(Tournament):
 			elimName = 'Match_'+str(inPool.name[-1])+'-'+str(i+1)
 			inPool.createMatch(nextWorstTeam, nextBestTeam, elimName)
 			# make nextPool part 2
-			outPool.addTeam(inPool.matchList[-1].getWinner())
+			outPool.addTeam(inPool.matchList[-1].winner)
 		# make nextPool part 3
 		self.addPool(outPool)
 		# TODO: 

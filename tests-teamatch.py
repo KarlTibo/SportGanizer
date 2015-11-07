@@ -14,8 +14,6 @@ class TestUnnamedTeamInitialization:
 		assert self.team.name == None
 	def test_has_no_matchs(self):
 		assert self.team.matchList == []
-	def test_is_dummy(self):
-		assert self.team.isUnnamedAndHasNoMatch()
 
 	def test_all_dummy_teams_are_not_the_same(self):
 		otherTeam = Team()
@@ -24,13 +22,13 @@ class TestUnnamedTeamInitialization:
 		assert self.team == self.team
 
 	def test_has_no_wins(self):
-		assert self.team.countWins() == 0
+		assert self.team._countWins() == 0
 	def test_has_no_loss(self):
-		assert self.team.countLosses() == 0
+		assert self.team._countLosses() == 0
 	def test_has_no_scoreFor(self):
-		assert self.team.countScoresFor() == 0
+		assert self.team._countScoresFor() == 0
 	def test_has_no_scoreAgainst(self):
-		assert self.team.countScoresAgainst() == 0
+		assert self.team._countScoresAgainst() == 0
 	def test_is_not_lower_than_self(self):
 		assert not self.team < self.team
 	def test_can_be_renamed(self):
@@ -49,8 +47,6 @@ class TestNamedTeamInitialization:
 		assert self.team.name == 'teamName'
 	def test_has_no_matchs(self):
 		assert self.team.matchList == []
-	def test_is_not_dummy(self):
-		assert not self.team.isUnnamedAndHasNoMatch()
 
 	def test_same_name_teams_are_not_the_same(self):
 		otherTeam = Team('teamName')
@@ -59,13 +55,13 @@ class TestNamedTeamInitialization:
 		assert self.team == self.team
 
 	def test_has_no_wins(self):
-		assert self.team.countWins() == 0
+		assert self.team._countWins() == 0
 	def test_has_no_loss(self):
-		assert self.team.countLosses() == 0
+		assert self.team._countLosses() == 0
 	def test_has_no_scoreFor(self):
-		assert self.team.countScoresFor() == 0
+		assert self.team._countScoresFor() == 0
 	def test_has_no_scoreAgainst(self):
-		assert self.team.countScoresAgainst() == 0
+		assert self.team._countScoresAgainst() == 0
 	def test_is_not_lower_than_self(self):
 		assert not self.team < self.team
 	def test_can_be_renamed(self):
@@ -279,7 +275,7 @@ class Test_team_takingPlaceOf:
 		self.matchAB = Match(self.teamAlice,self.teamBob,'matchAB')
 		self.matchBC = Match(self.teamBob,self.teamCharlie,'matchBC')
 		self.matchCB = Match(self.teamCharlie,self.teamBob,'matchCB')
-		self.newTeamAlice = self.teamAlice.takingPlaceOf(self.teamCharlie)
+		self.newTeamAlice = self.teamAlice._takingPlaceOf(self.teamCharlie)
 	def teardown_method(self,method):
 		del self.teamAlice
 		del self.teamBob
@@ -327,14 +323,14 @@ class Test_team_countScore_countScoreAgainst:
 		del self.matchBC
 
 	def test_effect_on_teamA(self):
-		assert self.teamAlice.countScoresFor() == 23
-		assert self.teamAlice.countScoresAgainst() == 33
+		assert self.teamAlice._countScoresFor() == 23
+		assert self.teamAlice._countScoresAgainst() == 33
 	def test_effect_on_teamB(self):
-		assert self.teamBob.countScoresFor() == 27
-		assert self.teamBob.countScoresAgainst() == 23
+		assert self.teamBob._countScoresFor() == 27
+		assert self.teamBob._countScoresAgainst() == 23
 	def test_effect_on_teamC(self):
-		assert self.teamCharlie.countScoresFor() == 30
-		assert self.teamCharlie.countScoresAgainst() == 24
+		assert self.teamCharlie._countScoresFor() == 30
+		assert self.teamCharlie._countScoresAgainst() == 24
 
 
 #
@@ -474,33 +470,33 @@ class Test_teams_countWins_countLosses_lt_and_sort:
 		del self.teamGreg
 		
 	def test_setup_and_Team_countWins_non_zero(self):
-		assert self.teamAlice.countWins() == 2
-		assert self.teamBob.countWins() == 2
-		assert self.teamCharlie.countWins() == 2
-		assert self.teamDave.countWins() == 2
-		assert self.teamElise.countWins() == 2
-		assert self.teamFred.countWins() == 1
+		assert self.teamAlice._countWins() == 2
+		assert self.teamBob._countWins() == 2
+		assert self.teamCharlie._countWins() == 2
+		assert self.teamDave._countWins() == 2
+		assert self.teamElise._countWins() == 2
+		assert self.teamFred._countWins() == 1
 	def test_setup_and_Team_countLosses_non_zero(self):
-		assert self.teamAlice.countLosses() == 1
-		assert self.teamBob.countLosses() == 1
-		assert self.teamCharlie.countLosses() == 1
-		assert self.teamDave.countLosses() == 1
-		assert self.teamElise.countLosses() == 2
-		assert self.teamFred.countLosses() == 1
+		assert self.teamAlice._countLosses() == 1
+		assert self.teamBob._countLosses() == 1
+		assert self.teamCharlie._countLosses() == 1
+		assert self.teamDave._countLosses() == 1
+		assert self.teamElise._countLosses() == 2
+		assert self.teamFred._countLosses() == 1
 	def test_setup_ScoresFor(self):
-		assert self.teamAlice.countScoresFor() == 15
-		assert self.teamBob.countScoresFor() == 15
-		assert self.teamCharlie.countScoresFor() == 15
-		assert self.teamDave.countScoresFor() == 13
-		assert self.teamElise.countScoresFor() == 15
-		assert self.teamFred.countScoresFor() == 15
+		assert self.teamAlice._countScoresFor() == 15
+		assert self.teamBob._countScoresFor() == 15
+		assert self.teamCharlie._countScoresFor() == 15
+		assert self.teamDave._countScoresFor() == 13
+		assert self.teamElise._countScoresFor() == 15
+		assert self.teamFred._countScoresFor() == 15
 	def test_setup_ScoresAgainst(self):
-		assert self.teamAlice.countScoresAgainst() == 11
-		assert self.teamBob.countScoresAgainst() == 11
-		assert self.teamCharlie.countScoresAgainst() == 13
-		assert self.teamDave.countScoresAgainst() == 11
-		assert self.teamElise.countScoresAgainst() == 11
-		assert self.teamFred.countScoresAgainst() == 11
+		assert self.teamAlice._countScoresAgainst() == 11
+		assert self.teamBob._countScoresAgainst() == 11
+		assert self.teamCharlie._countScoresAgainst() == 13
+		assert self.teamDave._countScoresAgainst() == 11
+		assert self.teamElise._countScoresAgainst() == 11
+		assert self.teamFred._countScoresAgainst() == 11
 
 	def test_lt_exact_Tie(self):
 		assert not self.teamBob < self.teamAlice
