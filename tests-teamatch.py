@@ -155,20 +155,20 @@ class Test_match_replace:
 		del self.matchAB
 
 	def test_replace_case1(self):
-		self.matchAB.replace(self.teamBob,self.teamCharlie)
+		self.matchAB._replace(self.teamBob,self.teamCharlie)
 		assert self.matchAB.teamB == self.teamCharlie
 	def test_replace_case2(self):
-		self.matchAB.replace(self.teamAlice,self.teamCharlie)
+		self.matchAB._replace(self.teamAlice,self.teamCharlie)
 		assert self.matchAB.teamA == self.teamCharlie
 	def test_replace_case3(self):
-		self.matchAB.replace(self.teamCharlie,self.teamBob)
+		self.matchAB._replace(self.teamCharlie,self.teamBob)
 		assert self.matchAB.teamB == self.teamCharlie
 	def test_replace_case4(self):
-		self.matchAB.replace(self.teamCharlie,self.teamAlice)
+		self.matchAB._replace(self.teamCharlie,self.teamAlice)
 		assert self.matchAB.teamA == self.teamCharlie
 	def test_replace_NameError(self):
 		with pytest.raises(ValueError):
-		 	self.matchAB.replace(Team(),Team())
+		 	self.matchAB._replace(Team(),Team())
 
 class Test_match_getScore_getScoreAgainst:
 	def setup_method(self,method):
@@ -183,17 +183,17 @@ class Test_match_getScore_getScoreAgainst:
 		del self.matchAB
 
 	def test_match_getScore(self):
-		assert self.matchAB.getScore(self.teamAlice) == 13
-		assert self.matchAB.getScore(self.teamBob) == 17
+		assert self.matchAB._getScore(self.teamAlice) == 13
+		assert self.matchAB._getScore(self.teamBob) == 17
 	def test_match_getScore_NameError(self):
 		with pytest.raises(ValueError):
-		 	self.matchAB.getScore(Team()) 
+		 	self.matchAB._getScore(Team()) 
 	def test_match_getScoreAgainst(self):
-		assert self.matchAB.getScoreAgainst(self.teamAlice) == 17
-		assert self.matchAB.getScoreAgainst(self.teamBob) == 13
+		assert self.matchAB._getScoreAgainst(self.teamAlice) == 17
+		assert self.matchAB._getScoreAgainst(self.teamBob) == 13
 	def test_match_getScore_NameError(self):
 		with pytest.raises(ValueError):
-		 	self.matchAB.getScoreAgainst(Team()) 
+		 	self.matchAB._getScoreAgainst(Team()) 
 		
 class Test_match_getWinner_getLoser:
 	def setup_method(self,method):
@@ -208,9 +208,9 @@ class Test_match_getWinner_getLoser:
 		del self.matchAB
 
 	def test_match_getWinner(self):
-		assert self.matchAB.getWinner() == self.teamAlice
+		assert self.matchAB.winner == self.teamAlice
 	def test_match_getLoser(self):
-		assert self.matchAB.getLoser() == self.teamBob
+		assert self.matchAB.loser == self.teamBob
 
 class Test_match_setScore_TWO_args:
 	def setup_method(self,method):
@@ -224,9 +224,9 @@ class Test_match_setScore_TWO_args:
 		del self.matchAB
 
 	def test_scoreA(self):
-		assert self.matchAB.getScore(self.teamAlice) == 5
+		assert self.matchAB._getScore(self.teamAlice) == 5
 	def test_scoreB(self):
-		assert self.matchAB.getScore(self.teamBob) == 0
+		assert self.matchAB._getScore(self.teamBob) == 0
 
 class Test_match_setScore_Error:
 	def setup_method(self,method):
@@ -343,8 +343,8 @@ class Test_match_setLoser_setWinner:
 		self.matchAB = Match(self.teamAlice,self.teamBob,'matchAB')
 		self.matchBW = Match(self.teamBob,self.matchAB.winner,'matchBW')
 		self.matchWL = Match(self.matchAB.winner,self.matchAB.loser,'matchWB')
-		self.matchAB.setWinner(self.teamAlice)
-		self.matchAB.setLoser(self.teamBob)
+		self.matchAB._setWinner(self.teamAlice)
+		self.matchAB._setLoser(self.teamBob)
 	def teardown_method(self,method):
 		del self.teamAlice
 		del self.teamBob
@@ -353,7 +353,7 @@ class Test_match_setLoser_setWinner:
 		del self.matchWL
 
 	def test_match_setWinner_winner(self):
-		assert self.matchAB.getWinner() == self.teamAlice
+		assert self.matchAB.winner == self.teamAlice
 	def test_match_setWinner_winner_matchList(self):
 		assert self.matchAB in self.teamAlice.matchList
 		assert self.matchBW in self.teamAlice.matchList
@@ -362,7 +362,7 @@ class Test_match_setLoser_setWinner:
 		assert self.matchWL.teamA == self.teamAlice
 		assert self.matchBW.teamB == self.teamAlice
 	def test_match_setLoser_loser(self):
-		assert self.matchAB.getLoser() == self.teamBob
+		assert self.matchAB.loser == self.teamBob
 	def test_match_setLoser_loser_matchList(self):
 		assert self.matchAB in self.teamBob.matchList
 		assert self.matchBW in self.teamBob.matchList
