@@ -10,27 +10,55 @@ class Pool:
 		self.name = initName
 		if initTeamList:
 			self.nOfTeams = len(initTeamList)
-			self.teamList = initTeamList
+			self._teamList = initTeamList
 		else:
 			self.nOfTeams = 0
-			self.teamList = []
+			self._teamList = []
 		self.numberOfMatches = 0
-		self.matchList = []
+		self._matchList = []
+
+	def show(self):
+		print '\n'+str(self.name)+'\n'
+		for match in self._matchList:
+			match.show()
+
 	def addTeam(self, newTeam):
 		if isinstance(newTeam, list):
 			self.nOfTeams += len(newTeam)
-			self.teamList.extend(newTeam)
+			self._teamList.extend(newTeam)
 		else:
 			self.nOfTeams += 1
-			self.teamList.append(newTeam)
+			self._teamList.append(newTeam)
+	
 	def createMatch(self, teamANumber, teamBNumber, matchName = None):
 		self.numberOfMatches += 1
-		self.newMatch = Match(self.teamList[teamANumber], self.teamList[teamBNumber], matchName)
-		self.matchList.append(self.newMatch)
-		
+		self.newMatch = Match(self._teamList[teamANumber], self._teamList[teamBNumber], matchName)
+		self._matchList.append(self.newMatch)
+	
+	def winnerList(self):
+		winnerList = []
+		for match in self._matchList:
+			winnerList.append(match.winner)
+		return winnerList
+
+	def loserList(self):
+		loserList = []
+		for match in self._matchList:
+			loserList.append(match.loser)
+		return loserList
+
+	def unmatchedList(self):
+		unmatchedList = self._teamList
+		for match in self._matchList:
+			for team in match:
+				if team in unmatchedList:
+					unmatchedList.remove(team)
+		return unmatchedList
+	
+	### TODO : the ranking function should only consider stats of the pool
 	def ranking(self):
-		sortedTeamList = sorted(self.teamList)
-		return sortedTeamList	
+		sortedTeamList = sorted(self._teamList, reverse = True)
+		return sortedTeamList
 
 	# IMPORTANT: the Pool shall receive the Teams input from the GUI
 	# TODO:
@@ -67,14 +95,13 @@ class SingleElimination(Tournament):
 		self.addPool(self.inputPool)
 	
 	def createPoolList(self):
-		self.nOfTeamsInLatestPool = len(self.poolList[-1].teamList)
+		self.nOfTeamsInLatestPool = len(self.poolList[-1]._teamList)
 		if self.nOfTeamsInLatestPool == 1:
-			print(str(self.poolList[-1].teamList[0].name)+' is the winner of the Tournament!')
+			print(str(self.poolList[-1]._teamList[0].name)+' is the winner of the Tournament!')
 			pass
 		else:
 			self.createMatchsAndNextPool()
 			self.createPoolList()
-
 	def createMatchsAndNextPool(self):
 		inPool = self.poolList[-1]
 		nOfByes = (2**(int(log2(inPool.nOfTeams)+1)))%inPool.nOfTeams
@@ -83,29 +110,29 @@ class SingleElimination(Tournament):
 		# make nextPool part 1
 		outPool = Pool('Pool_'+str(self.nOfPools+1))
 		for i in range(nOfByes):
-			outPool.addTeam(inPool.teamList[i])
+			outPool.addTeam(inPool._teamList[i])
+		
 		# make eliminations
 		for i in range(nOfElim):
 			nextWorstTeam = inPool.nOfTeams-1-i
 			nextBestTeam = nOfByes + i
 			elimName = 'Match_'+str(inPool.name[-1])+'-'+str(i+1)
 			inPool.createMatch(nextWorstTeam, nextBestTeam, elimName)
+			
 			# make nextPool part 2
-			outPool.addTeam(inPool.matchList[-1].winner)
+			outPool.addTeam(inPool._matchList[-1].winner)
 		# make nextPool part 3
 		self.addPool(outPool)
 		# TODO: 
-			# need to be splitted : self.createMatchs() and pool.passingTeams()
+			# CAN NOW be splitted : self.createMatchs() and pool.passingTeams()
 				# however, passing teams needs to be more flexible : pool.passingTeams()
-			# should access neither pool.teamList nor pool.nOfTeams... 
+			# should access neither pool._teamList nor pool.nOfTeams... 
 				# functions to do : pool.size() pool.match(i) pool.team(i)
 				# there may be a way to unify pool.team(i) and pool.ranking()
 
 	def show(self):
 		for pool in self.poolList:
-			print '\n'+str(pool.name)+'\n'
-			for match in pool.matchList:
-				match.show()
+			pool.show()
 	# TODO: 
 		#updatePool using the GUI
 		#add line in buildFirstPool and buildOtherPools assigning time slots and locations to matchs in each pool via pool.assignTimeSlotsToMatches and pool.assignLocationsToMatches

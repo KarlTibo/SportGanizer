@@ -8,10 +8,8 @@ class Team(object):
 		self.name = name 
 		self._matchList = []
 	
-	###[ NOTE : this one should definitely be private, because it doesn't handle the match itself
 	def _addMatch(self, match):
 		self._matchList.append(match)
-	###]
 	def _takingPlaceOf(self, team):
 		for match in team._matchList:
 			match._replace(self,team)
@@ -56,6 +54,20 @@ class Team(object):
 
 
 class Match(object):
+	@property
+	def winner(self):
+		return self._winner
+	@winner.setter
+	def winner(self, input):
+		raise ValueError('cannot set winner directly. Instead, use _setWinner to replace actual Team instance _winner in all its matchs')
+
+	@property
+	def loser(self):
+		return self._loser
+	@loser.setter
+	def loser(self, input):
+		raise ValueError('cannot set loser directly. Instead, use _setLoser to replace actual Team instance _loser in all its matchs')
+
 	def __init__(self, teamA, teamB, name = None):
 		self.name = name
 
@@ -71,21 +83,13 @@ class Match(object):
 		self.ended = False
 		self.isTied = False
 
-	@property
-	def winner(self):
-		return self._winner
-	@winner.setter
-	def winner(self, input):
-		raise ValueError('cannot set winner directly. Instead, use _setWinner to replace actual Team instance _winner in all its matchs')
 
-	@property
-	def loser(self):
-		return self._loser
-	@loser.setter
-	def loser(self, input):
-		raise ValueError('cannot set loser directly. Instead, use _setLoser to replace actual Team instance _loser in all its matchs')
+	def __contains__(self,team):
+		return team in [self._teamA,self._teamB]
 
-
+	def __iter__(self):
+		for team in [self._teamA,self._teamB]:
+			yield team
 
 	def _replace(self, firstTeam, secondTeam):
 		if self._teamA == firstTeam: 
@@ -116,10 +120,6 @@ class Match(object):
 			return self._scoreA
 		else:
 			raise ValueError("team "+str(team.name)+" not found")	
-	#def getWinner(self):
-	#	return self.winner
-	#def getLoser(self):
-	#	return self.loser
 
 	def setScore(self, team, score, secondTeam = None, secondScore = None):
 		assert not self.ended
@@ -133,7 +133,6 @@ class Match(object):
 		else:
 			self.setScore(team,score)
 			self.setScore(secondTeam,secondScore)
-	
 	def endMatch(self, team = None, score = None, secondTeam = None, secondScore = None):
 		assert not self.ended
 		if not (team==None and score==None and secondTeam==None and secondScore==None):
@@ -148,12 +147,8 @@ class Match(object):
 			self.isTied = True
 			raise ValueError("No tie allowed for now")
 		self.ended = True
-
 	def show(self):
 		print str(self.name)+' : '+str(self._teamA.name)+' vs '+str(self._teamB.name)+'\n'
 
-
-
-	
 	# To implement : match location, match time, match versus?, match delete(+ team.removeMatch test)
 	# if match already exists, copy itself to the existing match?	

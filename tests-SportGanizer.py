@@ -20,9 +20,9 @@ class TestPool_initialization:
 	def test_pool_initialization(self):
 		assert self.poolParty.numberOfMatches == 0
 	def test_pool_initialization(self):
-		assert self.poolParty.teamList == []
+		assert self.poolParty._teamList == []
 	def test_pool_initialization(self):
-		assert self.poolParty.matchList == []
+		assert self.poolParty._matchList == []
 
 class TestPool_initialization_with_team:
 	def setup_method(self,method):
@@ -34,7 +34,7 @@ class TestPool_initialization_with_team:
 	def test_nOfTeams_increased(self):
 		assert self.poolParty.nOfTeams == 1
 	def test_pool_initialization(self):
-		assert self.poolParty.teamList == [self.teamAlice]
+		assert self.poolParty._teamList == [self.teamAlice]
 
 class TestPool_addTeam:	
 	def setup_method(self,method):
@@ -48,7 +48,7 @@ class TestPool_addTeam:
 	def test_nOfTeams_increased(self):
 		assert self.poolParty.nOfTeams == 1
 	def test_team_in_pool(self):
-		assert self.teamAlice in self.poolParty.teamList
+		assert self.teamAlice in self.poolParty._teamList
 
 class TestPool_createMatch:
 	def setup_method(self,method):
@@ -65,15 +65,15 @@ class TestPool_createMatch:
 
 	def test_both_team_in_pool(self):
 		assert self.poolParty.nOfTeams == 2
-		assert self.teamAlice in self.poolParty.teamList
-		assert self.teamBob in self.poolParty.teamList
+		assert self.teamAlice in self.poolParty._teamList
+		assert self.teamBob in self.poolParty._teamList
 	def test_number_of_match_increased(self):
 		assert self.poolParty.numberOfMatches == 1
 	def test_match_name(self):
-		assert self.poolParty.matchList[0].name == "matchTest"
+		assert self.poolParty._matchList[0].name == "matchTest"
 	def test_match_teams(self):
-		assert self.poolParty.matchList[0]._teamA == self.teamAlice
-		assert self.poolParty.matchList[0]._teamB == self.teamBob
+		assert self.poolParty._matchList[0]._teamA == self.teamAlice
+		assert self.poolParty._matchList[0]._teamB == self.teamBob
 
 class TestPool_addTeam_list:
 	def setup_method(self,method):
@@ -89,28 +89,88 @@ class TestPool_addTeam_list:
 
 	def test_both_team_in_pool(self):
 		assert self.poolParty.nOfTeams == 2
-		assert self.teamAlice in self.poolParty.teamList
-		assert self.teamBob in self.poolParty.teamList
+		assert self.teamAlice in self.poolParty._teamList
+		assert self.teamBob in self.poolParty._teamList
 	def test_addTeam_with_list_order(self):
-		assert self.poolParty.teamList[0] == self.teamAlice
-		assert self.poolParty.teamList[1] == self.teamBob
+		assert self.poolParty._teamList[0] == self.teamAlice
+		assert self.poolParty._teamList[1] == self.teamBob
 
-class TestPool_ranking:
+class TestPool_winnerList_loserList_unmatchedList_ranking:
 	def setup_method(self,method):
 		self.teamAlice = Team("Alice")
 		self.teamBob = Team("Bob") 	
 		self.teamCharlie = Team("Charlie")
-		self.poolParty = Pool("Party")
+		self.teamDave = Team("Dave")
+		self.teamElise = Team("Elise")
+		self.poolParty = Pool("Party",[self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave,self.teamElise])
+		self.poolParty.createMatch(0, 1, "matchAB")
+		self.poolParty.createMatch(0, 2, "matchAC")
+		self.poolParty.createMatch(1, 2, "matchBC")
+		self.externalMatch = Match(self.teamElise,self.teamBob,'outsider')
 	def teardown_method(self,method):
 		del self.teamAlice
 		del self.teamBob
+		del self.teamCharlie
+		del self.teamDave
+		del self.teamElise
 		del self.poolParty
 
-	def test_ranking(self):
-		assert self.poolParty.ranking() == self.poolParty.teamList
+	def test_winnerList(self):
+		assert self.poolParty.winnerList() == [self.poolParty._matchList[i].winner for i in range(3)]
+	def test_loserList(self):
+		assert self.poolParty.loserList() == [self.poolParty._matchList[i].loser for i in range(3)]
+	def test_unmatchedList(self):
+		assert self.poolParty.unmatchedList() == [self.teamDave,self.teamElise]
+	
+class TestPool_winnerList_loserList_unmatchedList_ranking_once_matchs_are_played:
+	def setup_method(self,method):
+		self.teamAlice = Team("Alice")
+		self.teamBob = Team("Bob") 	
+		self.teamCharlie = Team("Charlie")
+		self.teamDave = Team("Dave")
+		self.teamElise = Team("Elise")
+		
+		self.poolParty = Pool("Party",[self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave,self.teamElise])
+		
+		self.poolParty.createMatch(0, 1, "matchAB")
+		self.poolParty.createMatch(0, 2, "matchAC")
+		self.poolParty.createMatch(1, 2, "matchBC")
+		self.externalMatchEB = Match(self.teamElise,self.teamBob,'matchEB')
+		
+		# SET Pool A-2-0-12-6 ; B-1-1-9-11 ; C-0-2-8-12 ; D-0-0-0-0 ; E-0-0-0-0
+		# BUT out  A-2-0-12-6 ; B-1-2-17-23; C-0-2-8-12 ; D-0-0-0-0 ; E-1-0-12-8
+		self.poolParty._matchList[0].endMatch(self.teamAlice,6,self.teamBob,3)
+		self.poolParty._matchList[1].endMatch(self.teamAlice,6,self.teamCharlie,3)
+		self.poolParty._matchList[2].endMatch(self.teamBob,6,self.teamCharlie,5)
+		self.externalMatchEB.endMatch(self.teamElise, 12, self.teamBob, 8)
+	
+	def teardown_method(self,method):
+		del self.teamAlice
+		del self.teamBob
+		del self.teamCharlie
+		del self.teamDave
+		del self.teamElise
+		del self.poolParty
+
+	def test_winnerList(self):
+		assert self.poolParty.winnerList() == [self.teamAlice,self.teamAlice,self.teamBob]
+	def test_loserList(self):
+		assert self.poolParty.loserList() == [self.teamBob,self.teamCharlie,self.teamCharlie]
+	def test_unmatchedList(self):
+		assert self.poolParty.unmatchedList() == [self.teamDave,self.teamElise]
+	
+	
 
 
-class TestTournament:
+
+
+
+
+
+
+
+
+class TestTournament_initialization:
 	def setup_method(self,method):
 		self.tournamentA = Tournament()
 		self.poolA = Pool()
@@ -130,7 +190,7 @@ class TestTournament:
 	def testAddingPool(self):
 		self.tournamentA.addPool(self.poolA)
 		assert self.tournamentA.poolList == [self.poolA]
-		
+
 
 
 
