@@ -88,54 +88,39 @@ class SingleElimination(Tournament):
 			self.inputPool = initPool
 			self.inputPool.name = "Pool_1"
 			self.addPool(self.inputPool)
-
+	@property
+	def lastPool(self):
+		return self.poolList[-1]
+		
+	def show(self):
+		for pool in self.poolList:
+			pool.show()
 	def setInputPool(self, initPool):
 		self.inputPool = initPool
 		self.inputPool.name = "Pool_1"
 		self.addPool(self.inputPool)
 	
-	def createPoolList(self):
-		self.nOfTeamsInLatestPool = len(self.poolList[-1]._teamList)
-		if self.nOfTeamsInLatestPool == 1:
-			print(str(self.poolList[-1]._teamList[0].name)+' is the winner of the Tournament!')
-			pass
+	def makeMatchTree(self):				# recursive
+		if self.lastPool.nOfTeams == 1:
+			self.lastPool.name = 'Champion'		# stops recursion
 		else:
-			self.createMatchsAndNextPool()
-			self.createPoolList()
-	def createMatchsAndNextPool(self):
-		inPool = self.poolList[-1]
-		nOfByes = (2**(int(log2(inPool.nOfTeams)+1)))%inPool.nOfTeams
-		nOfElim = (inPool.nOfTeams-nOfByes)/2
-		
-		# make nextPool part 1
-		outPool = Pool('Pool_'+str(self.nOfPools+1))
-		for i in range(nOfByes):
-			outPool.addTeam(inPool._teamList[i])
-		
-		# make eliminations
+			self.makeEliminationMatchs()
+			self.makeNextPool()
+			self.makeMatchTree()			# recall 
+	def makeEliminationMatchs(self):
+		nOfByes = (2**(int(log2(self.lastPool.nOfTeams)+1)))%self.lastPool.nOfTeams
+		nOfElim = (self.lastPool.nOfTeams-nOfByes)/2
 		for i in range(nOfElim):
-			nextWorstTeam = inPool.nOfTeams-1-i
-			nextBestTeam = nOfByes + i
-			elimName = 'Match_'+str(inPool.name[-1])+'-'+str(i+1)
-			inPool.createMatch(nextWorstTeam, nextBestTeam, elimName)
-			
-			# make nextPool part 2
-			outPool.addTeam(inPool._matchList[-1].winner)
-		# make nextPool part 3
-		self.addPool(outPool)
-		# TODO: 
-			# CAN NOW be splitted : self.createMatchs() and pool.passingTeams()
-				# however, passing teams needs to be more flexible : pool.passingTeams()
-			# should access neither pool._teamList nor pool.nOfTeams... 
-				# functions to do : pool.size() pool.match(i) pool.team(i)
-				# there may be a way to unify pool.team(i) and pool.ranking()
+			nextBestTeamIndex = nOfByes + i
+			nextWorstTeamIndex = self.lastPool.nOfTeams-1-i
+			elimName = 'Match '+str(self.lastPool.name.strip('Pool_'))+'-'+str(i+1)
+			self.lastPool.createMatch(nextBestTeamIndex, nextWorstTeamIndex ,elimName)
+	def makeNextPool(self):
+		nextPool = Pool('Pool_'+str(self.nOfPools+1))
+		nextPool.addTeam(self.lastPool.unmatchedList())
+		nextPool.addTeam(self.lastPool.winnerList())
+		self.addPool(nextPool)
 
-	def show(self):
-		for pool in self.poolList:
-			pool.show()
-	# TODO: 
-		#updatePool using the GUI
-		#add line in buildFirstPool and buildOtherPools assigning time slots and locations to matchs in each pool via pool.assignTimeSlotsToMatches and pool.assignLocationsToMatches
 
 
 			
@@ -145,6 +130,6 @@ if __name__ == "__main__":
 	thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)])
 	theTournament = SingleElimination()
 	theTournament.setInputPool(thePool)
-	theTournament.createPoolList()
+	theTournament.makeMatchTree()
 	theTournament.show()
 	

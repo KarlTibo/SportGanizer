@@ -54,20 +54,6 @@ class Team(object):
 
 
 class Match(object):
-	@property
-	def winner(self):
-		return self._winner
-	@winner.setter
-	def winner(self, input):
-		raise ValueError('cannot set winner directly. Instead, use _setWinner to replace actual Team instance _winner in all its matchs')
-
-	@property
-	def loser(self):
-		return self._loser
-	@loser.setter
-	def loser(self, input):
-		raise ValueError('cannot set loser directly. Instead, use _setLoser to replace actual Team instance _loser in all its matchs')
-
 	def __init__(self, teamA, teamB, name = None):
 		self.name = name
 
@@ -82,7 +68,18 @@ class Match(object):
 
 		self.ended = False
 		self.isTied = False
-
+	@property
+	def winner(self):
+		return self._winner
+	@winner.setter
+	def winner(self, input):
+		raise ValueError('cannot set winner directly. Instead, use _setWinner to replace actual Team instance _winner in all its matchs')
+	@property
+	def loser(self):
+		return self._loser
+	@loser.setter
+	def loser(self, input):
+		raise ValueError('cannot set loser directly. Instead, use _setLoser to replace actual Team instance _loser in all its matchs')
 
 	def __contains__(self,team):
 		return team in [self._teamA,self._teamB]
