@@ -14,13 +14,15 @@ class Pool:
 		else:
 			self.nOfTeams = 0
 			self._teamList = []
-		self.numberOfMatches = 0
+		self.nOfMatches = 0
 		self._matchList = []
 
 	def show(self):
 		print '\n'+str(self.name)+'\n'
 		for match in self._matchList:
 			match.show()
+	def rename(self, newName):
+		self.name = newName
 
 	def addTeam(self, newTeam):
 		if isinstance(newTeam, list):
@@ -31,9 +33,9 @@ class Pool:
 			self._teamList.append(newTeam)
 	
 	def createMatch(self, teamANumber, teamBNumber, matchName = None):
-		self.numberOfMatches += 1
-		self.newMatch = Match(self._teamList[teamANumber], self._teamList[teamBNumber], matchName)
-		self._matchList.append(self.newMatch)
+		self.nOfMatches += 1
+		newMatch = Match(self._teamList[teamANumber], self._teamList[teamBNumber], matchName)
+		self._matchList.append(newMatch)
 	
 	def winnerList(self):
 		winnerList = []
@@ -55,16 +57,12 @@ class Pool:
 					unmatchedList.remove(team)
 		return unmatchedList
 	
-	### TODO : the ranking function should only consider stats of the pool
 	def ranking(self):
 		sortedTeamList = sorted(self._teamList, reverse = True)
 		return sortedTeamList
 
-	# IMPORTANT: the Pool shall receive the Teams input from the GUI
-	# TODO:
-		#createTimeSlots(timeList) and assignTimeSlotsToMatches(timeSlots) OR a function that does both at same time, although that seems too large
-		#createLocations(locationList) and assignLocationsToMatches(locations) OR a function that does both at same time, although that seems too large
-
+	### TODO : the ranking function should only consider stats of the pool
+	
 
 
 
@@ -73,12 +71,24 @@ class Tournament:
 		self.name = name
 		self.poolList = []
 		self.nOfPools = 0
-	def addPool(self, pool):
-		self.poolList.append(pool)
-		self.nOfPools += 1
-	def removePool(self, pool):
-		self.poolList.remove(pool)
-	
+	@property
+	def lastPool(self):
+		return self.poolList[-1]
+
+	def rename(self,newName):
+		self.name = newName
+	def show(self):
+		for pool in self.poolList:
+			pool.show()
+
+	def addPool(self, newPool):
+		if isinstance(newPool, list):
+			self.nOfPools += len(newPool)
+			self.poolList.extend(newPool)
+		else:
+			self.nOfPools += 1	
+			self.poolList.append(newPool)
+			
 
 class SingleElimination(Tournament):
 	''' Must input a pool with method setInputPool before using other functions. '''
@@ -86,23 +96,17 @@ class SingleElimination(Tournament):
 		Tournament.__init__(self, 'single elimination')	
 		if initPool:
 			self.inputPool = initPool
-			self.inputPool.name = "Pool_1"
+			self.inputPool.rename("Pool_1")
 			self.addPool(self.inputPool)
-	@property
-	def lastPool(self):
-		return self.poolList[-1]
 		
-	def show(self):
-		for pool in self.poolList:
-			pool.show()
 	def setInputPool(self, initPool):
 		self.inputPool = initPool
-		self.inputPool.name = "Pool_1"
+		self.inputPool.rename("Pool_1")
 		self.addPool(self.inputPool)
 	
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
-			self.lastPool.name = 'Champion'		# stops recursion
+			self.lastPool.rename('Champion')# stops recursion
 		else:
 			self.makeEliminationMatchs()
 			self.makeNextPool()
@@ -125,10 +129,14 @@ class SingleElimination(Tournament):
 
 			
 if __name__ == "__main__":
+
+	#nOfTeams = int(input("How many teams are in your tournament?"))
+	import sys
+	try: nOfTeams = int(sys.argv[0])
+	except: nOfTeams = 47
 	
-	nOfTeams = int(input("How many teams are in your tournament?"))
 	thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)])
-	theTournament = SingleElimination()
+	theTournament = SingleElimination(thePool)
 	theTournament.setInputPool(thePool)
 	theTournament.makeMatchTree()
 	theTournament.show()
