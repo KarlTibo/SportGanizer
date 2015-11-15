@@ -73,7 +73,10 @@ class Tournament:
 		self.nOfPools = 0
 	@property
 	def lastPool(self):
-		return self.poolList[-1]
+		if self.poolList:
+			return self.poolList[-1]
+		else:
+			return None
 
 	def rename(self,newName):
 		self.name = newName
@@ -91,35 +94,39 @@ class Tournament:
 			
 
 class SingleElimination(Tournament):
-	''' Must input a pool with method setInputPool before using other functions. '''
+
 	def __init__(self, initPool = None):
 		Tournament.__init__(self, 'single elimination')	
 		if initPool:
-			self.inputPool = initPool
-			self.inputPool.rename("Pool_1")
-			self.addPool(self.inputPool)
+			self.setInputPool(initPool)
 		
+	### WARNING : side effect of renaming. See _makeEliminationMatch before changing
+	### NOTE : we might want to input a Pool with matchs already in it. This would
+	  # break our use of Pool.unmatchList() in makeMatchTree. The class should
+	  # may be take a team list as input rather than an actual Pool... or a pool input
+	  # being copied instead of taken as is and renamed. This is presently unclear
+	  # because of our poor specifications definition.
 	def setInputPool(self, initPool):
-		self.inputPool = initPool
-		self.inputPool.rename("Pool_1")
-		self.addPool(self.inputPool)
+		initPool.rename("Pool_1")
+		self.addPool(initPool)
 	
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
 			self.lastPool.rename('Champion')# stops recursion
 		else:
-			self.makeEliminationMatchs()
-			self.makeNextPool()
+			self._makeEliminationMatches()
+			self._makeNextPool()
 			self.makeMatchTree()			# recall 
-	def makeEliminationMatchs(self):
+	def _makeEliminationMatches(self):
 		nOfByes = (2**(int(log2(self.lastPool.nOfTeams)+1)))%self.lastPool.nOfTeams
 		nOfElim = (self.lastPool.nOfTeams-nOfByes)/2
 		for i in range(nOfElim):
 			nextBestTeamIndex = nOfByes + i
 			nextWorstTeamIndex = self.lastPool.nOfTeams-1-i
+			### WARNING : necessitate a pool name ending with a number
 			elimName = 'Match '+str(self.lastPool.name.strip('Pool_'))+'-'+str(i+1)
 			self.lastPool.createMatch(nextBestTeamIndex, nextWorstTeamIndex ,elimName)
-	def makeNextPool(self):
+	def _makeNextPool(self):
 		nextPool = Pool('Pool_'+str(self.nOfPools+1))
 		nextPool.addTeam(self.lastPool.unmatchedList())
 		nextPool.addTeam(self.lastPool.winnerList())

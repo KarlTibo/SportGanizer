@@ -182,6 +182,8 @@ class TestTournament_empty_initialization:
 	def test_renaming(self):
 		self.tournamentA.rename('tournament')
 		assert self.tournamentA.name == 'tournament'
+	def test_lastPool_property(self):
+		self.tournamentA.lastPool == None
 
 class TestTournament_adding_pool:
 	def setup_method(self,method):
@@ -196,6 +198,8 @@ class TestTournament_adding_pool:
 		assert self.tournamentA.poolList == [self.poolA]
 	def test_nOfPools_was_increased(self):
 		assert self.tournamentA.nOfPools == 1
+	def test_lastPool_property(self):
+		self.tournamentA.lastPool == self.poolA
 
 class TestTournament_adding_pool_list:
 	def setup_method(self,method):
@@ -215,10 +219,112 @@ class TestTournament_adding_pool_list:
 		assert self.tournamentA.poolList == self.lst
 	def test_nOfPools_was_increased(self):
 		assert self.tournamentA.nOfPools == 3
+	def test_lastPool_property(self):
+		self.tournamentA.lastPool == self.poolC
 
 
-
-### TODO
 #
 # TESTS on class SINGLE ELIMINATION
+
+class TestSingleElimination_empty_initialization:
+	def setup_method(self,method):
+		self.singleElimA = SingleElimination()
+	def teardown_method(self,method):
+		del self.singleElimA
+
+	def test_name(self):
+		assert self.singleElimA.name == "single elimination"
+
+class TestSingleElimination_initialization_with_pool:
+	def setup_method(self,method):
+		self.poolA = Pool('poolA')
+		self.singleElimA = SingleElimination(self.poolA)
+	def teardown_method(self,method):
+		del self.poolA
+		del self.singleElimA
+
+	def test_lastPool_is_poolA(self):
+		assert self.singleElimA.lastPool == self.poolA
+	def test_lastPool_was_renamed(self):	
+		assert self.singleElimA.lastPool.name == 'Pool_1'
+	def test_poolA_was_also_renamed(self):
+		### PROBLEM? side effect on name
+		assert self.poolA.name == 'Pool_1'
+
+class TestSingleElimination_setInputPool:
+	def setup_method(self,method):
+		self.poolA = Pool('poolA')
+		self.singleElimA = SingleElimination()		
+		self.singleElimA.setInputPool(self.poolA)
+	def teardown_method(self,method):
+		del self.poolA
+		del self.singleElimA
+
+	def test_lastPool_is_poolA(self):
+		assert self.singleElimA.lastPool == self.poolA
+	def test_lastPool_was_renamed(self):	
+		assert self.singleElimA.lastPool.name == 'Pool_1'
+	def test_poolA_was_also_renamed(self):
+		### PROBLEM? side effect on name
+		assert self.poolA.name == 'Pool_1'
+
+class TestSingleElimination_makeEliminationMatchs(self):
+	def setup_method(self,method):
+		self.teamAlice = Team("Alice")
+		self.teamBob = Team("Bob") 	
+		self.teamCharlie = Team("Charlie")
+		self.teamDave = Team("Dave")
+		self.teamElise = Team("Elise")
+		self.poolParty = Pool("Party",[self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave,self.teamElise])
+		self.singleElimA = SingleElimination(self.poolParty)
+		self.singleElimA.makeEliminationMatches()
+	def setup_method(self,method):
+		del self.teamAlice
+		del self.teamBob 	
+		del self.teamCharlie
+		del self.teamDave
+		del self.teamElise
+		del self.poolParty
+		del self.singleElimA
+		
+	def test_2_matches_created(self):
+		assert self.singleElimA.lastPool.nOfMatches == 2
+	###
+	###	PROBLEM: No way to publicly adress the matches or teams of Pool...
+	### function like teamBob.playAgainst(teamAlice) would be nice.
+	### similar to pool specific stats. must think of some way to do that.
+	def test_matchBE_Bob(self):
+		pass
+	def test_matchBE_Elise(self):
+		pass
+	def test_matchCD_Charlie(self):
+		pass
+	def test_matchCD_Dave(self):
+		pass
+	def test_Alice_noMatch(self):
+		pass
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
