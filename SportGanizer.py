@@ -118,10 +118,9 @@ class SingleElimination(Tournament):
 			self._makeNextPool()
 			self.makeMatchTree()			# recall 
 	def _makeEliminationMatches(self):
+		# nOfByes could be self.nOfByes with a function self.calcByesAndElims()
 		nOfByes = (2**(int(log2(self.lastPool.nOfTeams)+1)))%self.lastPool.nOfTeams
-		print nOfByes
 		nOfElim = (self.lastPool.nOfTeams-nOfByes)/2
-		print str(nOfElim)+'\n'
 		for i in range(nOfElim):
 			nextBestTeamIndex = nOfByes + i
 			nextWorstTeamIndex = self.lastPool.nOfTeams-1-i
