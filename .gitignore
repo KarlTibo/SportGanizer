@@ -1,7 +1,7 @@
 # Python Modules files
 SportGanizer.pyc
 teamatch.pyc
-
+__pycache__/
 
 
 # Windows image file caches
