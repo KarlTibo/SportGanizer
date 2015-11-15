@@ -268,7 +268,7 @@ class TestSingleElimination_setInputPool:
 		### PROBLEM? side effect on name
 		assert self.poolA.name == 'Pool_1'
 
-class TestSingleElimination_makeEliminationMatchs(self):
+class TestSingleElimination_makeEliminationMatchs:
 	def setup_method(self,method):
 		self.teamAlice = Team("Alice")
 		self.teamBob = Team("Bob") 	
@@ -277,8 +277,8 @@ class TestSingleElimination_makeEliminationMatchs(self):
 		self.teamElise = Team("Elise")
 		self.poolParty = Pool("Party",[self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave,self.teamElise])
 		self.singleElimA = SingleElimination(self.poolParty)
-		self.singleElimA.makeEliminationMatches()
-	def setup_method(self,method):
+		self.singleElimA._makeEliminationMatches()
+	def teardown_method(self,method):
 		del self.teamAlice
 		del self.teamBob 	
 		del self.teamCharlie
@@ -286,9 +286,10 @@ class TestSingleElimination_makeEliminationMatchs(self):
 		del self.teamElise
 		del self.poolParty
 		del self.singleElimA
-		
+	
+	### probably need a function for nOfByes
 	def test_2_matches_created(self):
-		assert self.singleElimA.lastPool.nOfMatches == 2
+		assert self.singleElimA.lastPool.nOfMatches == 1
 	###
 	###	PROBLEM: No way to publicly adress the matches or teams of Pool...
 	### function like teamBob.playAgainst(teamAlice) would be nice.

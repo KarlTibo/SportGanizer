@@ -119,7 +119,9 @@ class SingleElimination(Tournament):
 			self.makeMatchTree()			# recall 
 	def _makeEliminationMatches(self):
 		nOfByes = (2**(int(log2(self.lastPool.nOfTeams)+1)))%self.lastPool.nOfTeams
+		print nOfByes
 		nOfElim = (self.lastPool.nOfTeams-nOfByes)/2
+		print str(nOfElim)+'\n'
 		for i in range(nOfElim):
 			nextBestTeamIndex = nOfByes + i
 			nextWorstTeamIndex = self.lastPool.nOfTeams-1-i
@@ -137,14 +139,13 @@ class SingleElimination(Tournament):
 			
 if __name__ == "__main__":
 
-	#nOfTeams = int(input("How many teams are in your tournament?"))
-	import sys
-	try: nOfTeams = int(sys.argv[0])
-	except: nOfTeams = 47
+	nOfTeams = int(input("How many teams are in your tournament?"))
+	#import sys
+	#try: nOfTeams = int(sys.argv[0])
+	#except: nOfTeams = 47
 	
 	thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)])
 	theTournament = SingleElimination(thePool)
-	theTournament.setInputPool(thePool)
 	theTournament.makeMatchTree()
 	theTournament.show()
 	
