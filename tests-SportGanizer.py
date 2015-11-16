@@ -290,10 +290,11 @@ class TestSingleElimination_makeEliminationMatchs:
 	### probably need a function for nOfByes
 	def test_2_matches_created(self):
 		assert self.singleElimA.lastPool.nOfMatches == 1
-	###
 	###	PROBLEM: No way to publicly adress the matches or teams of Pool...
 	### function like teamBob.playAgainst(teamAlice) would be nice.
 	### similar to pool specific stats. must think of some way to do that.
+	### idea : pool.containsMatch(i,j) also accepting team args ...ainsMatch(teamA/B,teamB/A)
+	### idea : pool.countWins(teamA) and all similar stats function.
 	def test_matchBE_Bob(self):
 		pass
 	def test_matchBE_Elise(self):
