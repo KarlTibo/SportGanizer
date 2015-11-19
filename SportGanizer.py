@@ -103,17 +103,10 @@ class SingleElimination(Tournament):
 		Tournament.__init__(self, 'single elimination')	
 		if initTeamList:
 			self.makeInputPool(initTeamList)
-<<<<<<< Updated upstream
 		
 	def makeInputPool(self, initTeamList):
 		self.addPool(Pool('Pool_1',initTeamList))
 		
-=======
-			
-	def makeInputPool(self, initTeamList):
-		self.addPool(Pool('Pool_1',initTeamList))
-	
->>>>>>> Stashed changes
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
 			self.lastPool.rename('Champion')# stops recursion
