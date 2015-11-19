@@ -94,11 +94,14 @@ class Tournament:
 			
 
 class SingleElimination(Tournament):
-
-	def __init__(self, initPool = None):
+	'''
+	Takes a pre-ranked team list as input. If no team list is inputted at creation, make sure to use function "makeInputPool" before using "makeMatchTree".
+	'''
+	
+	def __init__(self, initTeamList = None):
 		Tournament.__init__(self, 'single elimination')	
-		if initPool:
-			self.setInputPool(initPool)
+		if initTeamList:
+			self.makeInputPool(initTeamList)
 		
 	### WARNING : side effect of renaming. See _makeEliminationMatch before changing
 	### NOTE : we might want to input a Pool with matchs already in it. This would
@@ -106,9 +109,10 @@ class SingleElimination(Tournament):
 	  # may be take a team list as input rather than an actual Pool... or a pool input
 	  # being copied instead of taken as is and renamed. This is presently unclear
 	  # because of our poor specifications definition.
-	def setInputPool(self, initPool):
-		initPool.rename("Pool_1")
-		self.addPool(initPool)
+	
+	def makeInputPool(self, initTeamList):
+		self.addPool(Pool('Pool_1',initTeamList))
+		
 	
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
@@ -143,8 +147,8 @@ if __name__ == "__main__":
 	#try: nOfTeams = int(sys.argv[0])
 	#except: nOfTeams = 47
 	
-	thePool = Pool('inputPool', [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)])
-	theTournament = SingleElimination(thePool)
+	theTeamList = [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)]
+	theTournament = SingleElimination(theTeamList)
 	theTournament.makeMatchTree()
 	theTournament.show()
 	
