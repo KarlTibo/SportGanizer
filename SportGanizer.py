@@ -71,6 +71,7 @@ class Tournament:
 		self.name = name
 		self.poolList = []
 		self.nOfPools = 0
+
 	@property
 	def lastPool(self):
 		if self.poolList:
@@ -80,6 +81,7 @@ class Tournament:
 
 	def rename(self,newName):
 		self.name = newName
+
 	def show(self):
 		for pool in self.poolList:
 			pool.show()
@@ -103,17 +105,9 @@ class SingleElimination(Tournament):
 		if initTeamList:
 			self.makeInputPool(initTeamList)
 		
-	### WARNING : side effect of renaming. See _makeEliminationMatch before changing
-	### NOTE : we might want to input a Pool with matchs already in it. This would
-	  # break our use of Pool.unmatchList() in makeMatchTree. The class should
-	  # may be take a team list as input rather than an actual Pool... or a pool input
-	  # being copied instead of taken as is and renamed. This is presently unclear
-	  # because of our poor specifications definition.
-	
 	def makeInputPool(self, initTeamList):
 		self.addPool(Pool('Pool_1',initTeamList))
 		
-	
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
 			self.lastPool.rename('Champion')# stops recursion
@@ -121,6 +115,7 @@ class SingleElimination(Tournament):
 			self._makeEliminationMatches()
 			self._makeNextPool()
 			self.makeMatchTree()			# recall 
+
 	def _makeEliminationMatches(self):
 		# nOfByes could be self.nOfByes with a function self.calcByesAndElims()
 		nOfByes = (2**(int(log2(self.lastPool.nOfTeams)+1)))%self.lastPool.nOfTeams
@@ -131,6 +126,7 @@ class SingleElimination(Tournament):
 			### WARNING : necessitate a pool name ending with a number
 			elimName = 'Match '+str(self.lastPool.name.strip('Pool_'))+'-'+str(i+1)
 			self.lastPool.createMatch(nextBestTeamIndex, nextWorstTeamIndex ,elimName)
+
 	def _makeNextPool(self):
 		nextPool = Pool('Pool_'+str(self.nOfPools+1))
 		nextPool.addTeam(self.lastPool.unmatchedList())
