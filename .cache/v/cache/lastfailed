@@ -1,14 +1,1 @@
-{
-  "tests-SportGanizer.py::TestSingleElimination_initialization_with_pool::()::test_lastPool_is_poolA": true, 
-  "tests-SportGanizer.py::TestSingleElimination_initialization_with_pool::()::test_lastPool_was_renamed": true, 
-  "tests-SportGanizer.py::TestSingleElimination_initialization_with_pool::()::test_poolA_was_also_renamed": true, 
-  "tests-SportGanizer.py::TestSingleElimination_makeEliminationMatchs::()::test_2_matches_created": true, 
-  "tests-SportGanizer.py::TestSingleElimination_makeEliminationMatchs::()::test_Alice_noMatch": true, 
-  "tests-SportGanizer.py::TestSingleElimination_makeEliminationMatchs::()::test_matchBE_Bob": true, 
-  "tests-SportGanizer.py::TestSingleElimination_makeEliminationMatchs::()::test_matchBE_Elise": true, 
-  "tests-SportGanizer.py::TestSingleElimination_makeEliminationMatchs::()::test_matchCD_Charlie": true, 
-  "tests-SportGanizer.py::TestSingleElimination_makeEliminationMatchs::()::test_matchCD_Dave": true, 
-  "tests-SportGanizer.py::TestSingleElimination_setInputPool::()::test_lastPool_is_poolA": true, 
-  "tests-SportGanizer.py::TestSingleElimination_setInputPool::()::test_lastPool_was_renamed": true, 
-  "tests-SportGanizer.py::TestSingleElimination_setInputPool::()::test_poolA_was_also_renamed": true
-}
+{}

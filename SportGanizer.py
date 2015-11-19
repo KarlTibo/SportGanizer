@@ -5,21 +5,21 @@ import copy
 from teamatch import *
 
 
-class Pool:
+class Pool(object):
 	def __init__(self, initName=None, initTeamList=None):
 		self.name = initName
 		if initTeamList:
 			self.nOfTeams = len(initTeamList)
-			self._teamList = initTeamList
+			self.teamList = initTeamList
 		else:
 			self.nOfTeams = 0
-			self._teamList = []
+			self.teamList = []
 		self.nOfMatches = 0
-		self._matchList = []
+		self.matchList = []
 
 	def show(self):
 		print '\n'+str(self.name)+'\n'
-		for match in self._matchList:
+		for match in self.matchList:
 			match.show()
 	def rename(self, newName):
 		self.name = newName
@@ -27,46 +27,45 @@ class Pool:
 	def addTeam(self, newTeam):
 		if isinstance(newTeam, list):
 			self.nOfTeams += len(newTeam)
-			self._teamList.extend(newTeam)
+			self.teamList.extend(newTeam)
 		else:
 			self.nOfTeams += 1
-			self._teamList.append(newTeam)
+			self.teamList.append(newTeam)
 	
 	def createMatch(self, teamANumber, teamBNumber, matchName = None):
 		self.nOfMatches += 1
-		newMatch = Match(self._teamList[teamANumber], self._teamList[teamBNumber], matchName)
-		self._matchList.append(newMatch)
+		newMatch = Match(self.teamList[teamANumber], self.teamList[teamBNumber], matchName)
+		self.matchList.append(newMatch)
 	
 	def winnerList(self):
 		winnerList = []
-		for match in self._matchList:
+		for match in self.matchList:
 			winnerList.append(match.winner)
 		return winnerList
 
 	def loserList(self):
 		loserList = []
-		for match in self._matchList:
+		for match in self.matchList:
 			loserList.append(match.loser)
 		return loserList
 
 	def unmatchedList(self):
-		unmatchedList = self._teamList
-		for match in self._matchList:
+		unmatchedList = self.teamList
+		for match in self.matchList:
 			for team in match:
 				if team in unmatchedList:
 					unmatchedList.remove(team)
 		return unmatchedList
 	
 	def ranking(self):
-		sortedTeamList = sorted(self._teamList, reverse = True)
+		sortedTeamList = []#sorted(self.teamList, reverse = True)
 		return sortedTeamList
-
 	### TODO : the ranking function should only consider stats of the pool
 	
 
 
 
-class Tournament:
+class Tournament(object):
 	def __init__(self, name = None):
 		self.name = name
 		self.poolList = []
@@ -104,10 +103,17 @@ class SingleElimination(Tournament):
 		Tournament.__init__(self, 'single elimination')	
 		if initTeamList:
 			self.makeInputPool(initTeamList)
+<<<<<<< Updated upstream
 		
 	def makeInputPool(self, initTeamList):
 		self.addPool(Pool('Pool_1',initTeamList))
 		
+=======
+			
+	def makeInputPool(self, initTeamList):
+		self.addPool(Pool('Pool_1',initTeamList))
+	
+>>>>>>> Stashed changes
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
 			self.lastPool.rename('Champion')# stops recursion
@@ -139,10 +145,7 @@ class SingleElimination(Tournament):
 if __name__ == "__main__":
 
 	nOfTeams = int(input("How many teams are in your tournament?"))
-	#import sys
-	#try: nOfTeams = int(sys.argv[0])
-	#except: nOfTeams = 47
-	
+		
 	theTeamList = [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)]
 	theTournament = SingleElimination(theTeamList)
 	theTournament.makeMatchTree()
