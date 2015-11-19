@@ -2,7 +2,7 @@
 SportGanizer.pyc
 teamatch.pyc
 __pycache__/
-
+.cache
 
 # Windows image file caches
 Thumbs.db
