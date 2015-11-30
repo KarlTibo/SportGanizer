@@ -58,7 +58,19 @@ class Pool(object):
 		return unmatchedList
 	
 	def ranking(self):
-		sortedTeamList = []#sorted(self.teamList, reverse = True)
+		sortedTeamListCopy = []
+		for team in self.teamList:
+			sortedTeamListCopy.append(copy.deepcopy(team))
+		for teamCopy in sortedTeamListCopy:
+			for match in teamCopy._matchList:
+				if self.matchList.count(match) == 0:
+					teamCopy._matchList.remove(match)
+		sortedTeamListCopy = sorted(sortedTeamListCopy, reverse = True)
+		sortedTeamList = []
+		for teamCopy in sortedTeamListCopy:
+			for team in self.teamList:
+				if teamCopy.name == team.name:
+					sortedTeamList.append(team)
 		return sortedTeamList
 	### TODO : the ranking function should only consider stats of the pool
 	

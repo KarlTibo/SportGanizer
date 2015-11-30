@@ -186,6 +186,14 @@ class TestPool_ranking():
 		self.poolParty.matchList[2].endMatch(self.teamBob,6,self.teamCharlie,5)
 		self.externalMatchEB.endMatch(self.teamElise, 12, self.teamBob, 8)
 		self.poolPartyRanking = self.poolParty.ranking()
+		#La creation du 2e pool (poolHockey) permet seulement le dernier test qui verifie que l'utilisation de deepcopy dans le ranking ne chie pas les equipes.
+		self.poolHockey = Pool("Party",[self.teamAlice,self.teamBob,self.teamCharlie,self.teamDave,self.teamElise])
+		self.poolHockey.createMatch(0, 1, "matchAB")
+		self.poolHockey.createMatch(1, 2, "matchBC")
+		# SET Pool stats  A-0-1-3-6 ; B-2-0-12-8 ; C-0-1-5-6 ; D-0-0-0-0 ; E-0-0-0-0
+		# BUT total stats  A-2-1-15-12 ; B-3-2-29-31; C-0-3-13-18 ; D-0-0-0-0 ; E-1-0-12-8
+		self.poolHockey.matchList[0].endMatch(self.teamAlice,3,self.teamBob,6)
+		self.poolHockey.matchList[1].endMatch(self.teamBob,6,self.teamCharlie,5)
 	def teardown_method(self,method):
 		del self.teamAlice
 		del self.teamBob
@@ -197,18 +205,22 @@ class TestPool_ranking():
 
 	def test_ranking_is_a_teamlist(self):
 		assert isinstance(self.poolPartyRanking,list)
-	'''
 	def test_Alice_better_than_bob(self):
 		assert self.poolPartyRanking.index(self.teamAlice) < self.poolPartyRanking.index(self.teamBob)
 	def test_preranking_Dave_better_than_Elise_conserved(self):
 		assert self.poolPartyRanking.index(self.teamDave) < self.poolPartyRanking.index(self.teamElise)
-	def test_ranking_positions(self):							#ext.
-		assert self.poolPartyRanking[0] == self.teamAlice		#Alice
-		assert self.poolPartyRanking[1] == self.teamBob 		#Elise
-		assert self.poolPartyRanking[2] == self.teamDave		#Bob
-		assert self.poolPartyRanking[3] == self.teamElise		#Dave
-		assert self.poolPartyRanking[4] == self.teamCharlie		#Charlie
-	'''
+	def test_Alice_ranking_position(self):							#ext.
+		assert self.poolPartyRanking.index(self.teamAlice) == 0		#Alice
+	def test_Bob_ranking_position(self):
+		assert self.poolPartyRanking.index(self.teamBob) == 1		#Elise
+	def test_Dave_ranking_position(self):
+		assert self.poolPartyRanking.index(self.teamDave) == 2		#Bob
+	def test_Elise_ranking_position(self):
+		assert self.poolPartyRanking.index(self.teamElise) == 3		#Dave
+	def test_Charlie_ranking_position(self):
+		assert self.poolPartyRanking.index(self.teamCharlie) == 4	#Charlie
+	def test_teams_not_changed_by_ranking(self):
+		assert self.teamElise < self.teamBob
 
 
 
