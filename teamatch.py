@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import copy
 
 
 
@@ -16,6 +16,12 @@ class Team(object):
 			self._addMatch(match)
 		team._matchList = []
 		return self
+	def createDummyTeamForPool(self, pool):
+		teamCopy = copy.deepcopy(self)
+		for match in teamCopy._matchList:
+			if pool.matchList.count(match) == 0:
+				teamCopy._matchList.remove(match)
+		return teamCopy
 	
 	def _countScoresFor(self):
 		nOfScoreFor = 0

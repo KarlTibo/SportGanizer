@@ -21,6 +21,9 @@ class Pool(object):
 		print '\n'+str(self.name)+'\n'
 		for match in self.matchList:
 			match.show()
+		if self.matchList == []:
+			print str(self.teamList[0].name)
+			print '\n\n'
 	def rename(self, newName):
 		self.name = newName
 
@@ -60,11 +63,7 @@ class Pool(object):
 	def ranking(self):
 		sortedTeamListCopy = []
 		for team in self.teamList:
-			sortedTeamListCopy.append(copy.deepcopy(team))
-		for teamCopy in sortedTeamListCopy:
-			for match in teamCopy._matchList:
-				if self.matchList.count(match) == 0:
-					teamCopy._matchList.remove(match)
+			sortedTeamListCopy.append(team.createDummyTeamForPool(self))
 		sortedTeamListCopy = sorted(sortedTeamListCopy, reverse = True)
 		sortedTeamList = []
 		for teamCopy in sortedTeamListCopy:
@@ -94,6 +93,7 @@ class Tournament(object):
 		self.name = newName
 
 	def show(self):
+		print '\n'+str(self.name)+'\n'
 		for pool in self.poolList:
 			pool.show()
 
@@ -105,14 +105,13 @@ class Tournament(object):
 			self.nOfPools += 1	
 			self.poolList.append(newPool)
 			
-
 class SingleElimination(Tournament):
 	'''
 	Takes a pre-ranked team list as input. If no team list is inputted at creation, make sure to use function "makeInputPool" before using "makeMatchTree".
 	'''
 	
 	def __init__(self, initTeamList = None):
-		Tournament.__init__(self, 'single elimination')	
+		Tournament.__init__(self, 'Single elimination')	
 		if initTeamList:
 			self.makeInputPool(initTeamList)
 		
@@ -135,7 +134,7 @@ class SingleElimination(Tournament):
 			nextBestTeamIndex = nOfByes + i
 			nextWorstTeamIndex = self.lastPool.nOfTeams-1-i
 			### WARNING : necessitate a pool name ending with a number
-			elimName = 'Match '+str(self.lastPool.name.strip('Pool_'))+'-'+str(i+1)
+			elimName = str(self.name[0])+' match '+str(self.lastPool.name.strip('Pool_'))+'-'+str(i+1)
 			self.lastPool.createMatch(nextBestTeamIndex, nextWorstTeamIndex ,elimName)
 
 	def _makeNextPool(self):
@@ -144,15 +143,86 @@ class SingleElimination(Tournament):
 		nextPool.addTeam(self.lastPool.winnerList())
 		self.addPool(nextPool)
 
+class LoserBracket(SingleElimination):
+	## TODO : Be sure it is not possible to change the "if" in __init__
+	## TODO : The matches are not exactly as they should be. There is too many possibilities of replaying the same team (look at the difference on "Challonge".
+	## TODO : Reimplement the "if" in _makeNextPool.
+	def __init__(self, winnerBracket):
+		self.winnerBracket = winnerBracket
+		self.nOfTeamsInTournament = winnerBracket.poolList[0].nOfTeams
+		if self.nOfTeamsInTournament > 2:
+			Tournament.__init__(self, 'Loser Bracket')	
+			self._makeInputPool()
+		else:
+			raise ValueError("Double Elimination not needed.")
+		self.loserAddIndex = 2
+
+	def _makeInputPool(self):
+		firstTeamList = self.winnerBracket.poolList[1].loserList() + self.winnerBracket.poolList[0].loserList()[::-1]
+		self.addPool(Pool('Pool_1',firstTeamList))
+
+	def _makeNextPool(self):
+		nextPool = Pool('Pool_'+str(self.nOfPools+1))
+		if (self.nOfPools > 1 and len(self.lastPool.unmatchedList()) == 0) or (self.nOfTeamsInTournament > 4 and self.nOfPools == 1 and 2**len(self.lastPool.unmatchedList()) < self.nOfTeamsInTournament):
+			nextPool.addTeam(self.winnerBracket.poolList[self.loserAddIndex].loserList())
+			self.loserAddIndex += 1
+		nextPool.addTeam(self.lastPool.unmatchedList())
+		nextPool.addTeam(self.lastPool.winnerList())
+		self.addPool(nextPool)
+
+class DoubleElimination():
+	'''
+	Takes a pre-ranked team list as input. If no team list is inputted at creation, make sure to use function "makeInputPool" before using "makeMatchTree".
+	'''
+	## TODO : Implement the 2nd match of the final bracket if the winner loses.
+	## TODO : Make sure this is the best implementation possible.
+	def __init__(self, initTeamList = None):
+		if initTeamList:
+			self.winnerBracket = SingleElimination(initTeamList)
+		else:
+			self.winnerBracket = SingleElimination()
+		
+		self.winnerBracket.rename("Winner Bracket")
+		self.finalBracket = SingleElimination()
+		self.finalBracket.rename("Finals Bracket")
+		
+	def makeInputPool(self, initTeamList):
+		self.winnerBracket.makeInputPool(initTeamList)
+	
+	def makeMatchTree(self):
+		#iterate winner bracket
+		self.winnerBracket.makeMatchTree()
+		#iterate loser bracket
+		self.loserBracket = LoserBracket(self.winnerBracket)
+		self.loserBracket.rename("Loser Bracket")
+		self.loserBracket.makeMatchTree()
+		#create finals bracket
+		self.finalTeamList = [self.winnerBracket.lastPool.teamList[0],self.loserBracket.lastPool.teamList[0]]
+		self.finalBracket.makeInputPool(self.finalTeamList)
+		self.finalBracket.makeMatchTree()
+		
+	def show(self):
+		print
+		self.winnerBracket.show()
+		self.loserBracket.show()
+		self.finalBracket.show()
+		
 
 
-			
+
 if __name__ == "__main__":
 
 	nOfTeams = int(input("How many teams are in your tournament?"))
 		
 	theTeamList = [Team('Team_'+str(i)) for i in range(1, nOfTeams+1)]
-	theTournament = SingleElimination(theTeamList)
+	typeOfTournament = str(input("What type of tournament do you want? \n Input 'SE' for Single Elimination or 'DE' for Double Elimination."))
+	if typeOfTournament == "SE":
+		theTournament = SingleElimination(theTeamList)
+	elif typeOfTournament == "DE":
+		theTournament = DoubleElimination(theTeamList)
+	else:
+		raise ValueError("You have not entered a correct input. Please retry.")
+		
 	theTournament.makeMatchTree()
 	theTournament.show()
 	

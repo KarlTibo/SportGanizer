@@ -286,7 +286,7 @@ class TestTournament_adding_pool_list:
 
 #
 # TESTS on class SINGLE ELIMINATION
-
+## TODO : Tests on class SingleElimination... but they are already done brute force with Challonge... think of a way to test.
 class TestSingleElimination_empty_initialization:
 	def setup_method(self,method):
 		self.singleElimA = SingleElimination()
@@ -370,8 +370,8 @@ class TestSingleElimination_makeEliminationMatchs:
 '''		
 
 
-
-
+## TODO : Tests on class LowerBracket
+## TODO : Tests on class DoubleElimination
 
 
 
