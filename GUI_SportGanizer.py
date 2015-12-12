@@ -12,57 +12,108 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 
-'''
-class GUI_Team():
-	counter = 0
-	__init__(self):
-		counter += 1
-		self.team = Team('team '+str(counter))
 
-		name_input = TextInput(text='Hello world', multiline=False, size_hint=None, height=10)
-'''
+class GUI_Team(BoxLayout):
+	def __init__(self, name = 'team' ,**kwargs):
+		super(GUI_Team, self).__init__(orientation='horizontal', spacing=5, size_hint_y=None, height=30, **kwargs)
+		self.team = Team(name)
 
+		self.name_input = TextInput(text=self.team.name,size_hint_x=1.0, multiline=False)	
+		self.name_input.bind(text=self.rename)
+		self.add_widget(self.name_input)
 
-class GUI_TeamList():
-	def __init__(self):
-		self.teamList = [Team('team '+str(i+1)) for i in range(19)]
-
-
-	def layout(self,**kwargs):
-
-		button = Button(text='add team',pos_hint={'center_x':0.5},size_hint_x=None, size_hint_y=None, height=30, width=100)
-		scrollSpace = ScrollView(size_hint=(1.0, 1.0))
+		self.delete_button = Button(text='-', pos_hint={'center_y':0.5}, size_hint_x=None, size_hint_y=None, height=25, width=25)
+		self.add_widget(self.delete_button)
 		
-		input_list = GridLayout(cols=2, spacing=5, size_hint_y=None)
-		input_list.bind(minimum_height=input_list.setter('height'))
+	def rename(self,instance,text):
+		self.team.name = text
 
+
+class GUI_TeamList(BoxLayout):							# NOTE : important that the layout is not a function otherwise binding fails.
+	def __init__(self, n_init_teams=2, **kwargs):
+		super(GUI_TeamList, self).__init__(orientation='vertical', spacing=5, padding=10, **kwargs)
+		self.teamList = []
+		
+		self.listLayout = GridLayout(cols=1, spacing=5, size_hint_y=None)
+		self.listLayout.bind(minimum_height=self.listLayout.setter('height'))
+		self.scrollSpace = ScrollView(size_hint=(1.0, 1.0))
+		self.scrollSpace.add_widget(self.listLayout)
+		
+		self.addTeamButton = Button(text='add team',pos_hint={'center_x':0.5},size_hint_x=None, size_hint_y=None, height=30, width=100)
+		self.addTeamButton.bind(on_press=self.addTeam)
+
+		self.add_widget(self.addTeamButton)
+		self.add_widget(self.scrollSpace)
+
+		for i in range(n_init_teams):
+			self.addTeam(None)
+	
+	def addTeam(self,addButton):
+		team = GUI_Team('team '+str(len(self.teamList)+1))
+		self.teamList.append(team)
+		self.addTeamToLayout(team)
+		team.delete_button.bind(on_press=self.removeTeam)
+
+	def addTeamToLayout(self,team):
+		self.listLayout.add_widget(team)
+
+	def update(self):
+		self.listLayout.clear_widgets()
 		for team in self.teamList:
-			team_name = TextInput(text=team.name,size_hint_x=1.0, size_hint_y=None, height=30, multiline=False)
-			delete_button = Button(text='-', size_hint_x=None, size_hint_y=None, height=20, width=20,)
-			input_list.add_widget(team_name)
-			input_list.add_widget(delete_button)
-		scrollSpace.add_widget(input_list)
+			self.addTeamToLayout(team)
 
-		mainLayout = BoxLayout(orientation='vertical', spacing=5,**kwargs)
-		mainLayout.add_widget(button)
-		mainLayout.add_widget(scrollSpace)
+	def removeTeam(self,button):
+		for team in self.teamList:
+			if team.delete_button == button:
+				teamToDelete = team
+		self.teamList.remove(teamToDelete)
+		self.update()
 
-		return mainLayout
+	def activeList(self):
+		return [t.team for t in self.teamList]
 
+
+class GUI_MatchTree(BoxLayout):
+	def __init__(self, **kwargs):
+		super(GUI_MatchTree, self).__init__(orientation='vertical', spacing=5, padding=10, **kwargs)
+		self.teamList = []
+		
+		self.treeLayout = GridLayout(cols=1, spacing=5, size_hint_y=None)
+		self.treeLayout.bind(minimum_height=self.treeLayout.setter('height'))
+		self.treeLayout.bind(minimum_width=self.treeLayout.setter('width'))
+		self.scrollSpace = ScrollView(size_hint=(1.0, 1.0))
+		self.scrollSpace.add_widget(self.treeLayout)
+
+		self.add_widget(self.scrollSpace)
+
+	def make(self,teamList):
+		tournament = SingleElimination(teamList)
+		tournament.makeMatchTree()
+
+		# def update ?
+		for pool in tournament.poolList:
+			pool.show()
+			'''
+			add a PoolBox
+			for match in pool:
+				add match to PoolBox
+			'''
+	
 
 class SportGanizerApp(App):
 	def build(self):
-		mainLayout = BoxLayout(orientation='horizontal', padding=10, spacing=10, size_hint_y=1)
-		teamList = GUI_TeamList()
-		treeLayout = BoxLayout(orientation='vertical', size_hint_x=1.0,spacing=15)
-		# treeLayout.add_widget(Button(text='dumb'))
+		teamList = GUI_TeamList(size_hint_x=None, width=150)
+		treeLayout = GUI_MatchTree()
+		mainLayout = BoxLayout()
 
-		mainLayout.add_widget(teamList.layout(size_hint_x=None, width=150))
+		makeButton = Button(text='make',pos_hint={'left_x':0},size_hint_x=None, size_hint_y=None, height=30, width=100)
+		makeButton.bind(on_press=lambda x: treeLayout.make(teamList.activeList()))
+
+		mainLayout.add_widget(teamList)
+		mainLayout.add_widget(makeButton)
 		mainLayout.add_widget(treeLayout)
 
 		return mainLayout
-
-
 
 if __name__ == '__main__':
     SportGanizerApp().run()
