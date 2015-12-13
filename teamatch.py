@@ -63,8 +63,8 @@ class Match(object):
 		self._teamB._addMatch(self)
 		self._scoreA = 0
 		self._scoreB = 0
-		self._winner = Team(str(self.name)+'-winner')
-		self._loser = Team(str(self.name)+'-loser')
+		self._winner = Team(str(self.name)+'-W')
+		self._loser = Team(str(self.name)+'-L')
 
 		self.ended = False
 		self.isTied = False

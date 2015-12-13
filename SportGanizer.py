@@ -3,6 +3,7 @@ from numpy import *
 import copy
 
 from teamatch import *
+LETTERS=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 
 
 class Pool(object):
@@ -105,7 +106,7 @@ class SingleElimination(Tournament):
 			self.makeInputPool(initTeamList)
 		
 	def makeInputPool(self, initTeamList):
-		self.addPool(Pool('Pool_1',initTeamList))
+		self.addPool(Pool('A',initTeamList))
 		
 	def makeMatchTree(self):				# recursive
 		if self.lastPool.nOfTeams == 1:
@@ -123,11 +124,11 @@ class SingleElimination(Tournament):
 			nextBestTeamIndex = nOfByes + i
 			nextWorstTeamIndex = self.lastPool.nOfTeams-1-i
 			### WARNING : necessitate a pool name ending with a number
-			elimName = 'Match '+str(self.lastPool.name.strip('Pool_'))+'-'+str(i+1)
+			elimName = self.lastPool.name+str(i+1)
 			self.lastPool.createMatch(nextBestTeamIndex, nextWorstTeamIndex ,elimName)
 
 	def _makeNextPool(self):
-		nextPool = Pool('Pool_'+str(self.nOfPools+1))
+		nextPool = Pool(LETTERS[self.nOfPools])
 		nextPool.addTeam(self.lastPool.unmatchedList())
 		nextPool.addTeam(self.lastPool.winnerList())
 		self.addPool(nextPool)
